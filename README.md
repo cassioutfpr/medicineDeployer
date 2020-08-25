@@ -66,3 +66,34 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+react 
+
+npm install -g create-react-app
+create-react-app visitorhealth-client
+npm start
+npm install --save react-router-dom
+npm install --save @material-ui/core
+npm install --save @material-ui/icons
+npm install --save axios
+npm install --save jwt-decode
+npm install --save redux react-redux redux-thunk
+
+
+Firebase
+npm isntall -g firebase-tools
+firebase login
+firebase init 
+  
+  ( )
+  (*)Functions  (apertar espaço)
+  ( )
+
+Selecionar visitorHealth
+
+>Javascript (se precisar)
+
+N para ESLint
+
+Do you want to install dependencies with npm now? yes
