@@ -16,7 +16,8 @@ import IconButton from '@material-ui/core/IconButton';
 
 const styles  = {
   root: {
-    maxHeight: '900px'
+    maxHeight: '900px',
+
   },
   divider: {
     marginBottom: '10px',
@@ -25,7 +26,7 @@ const styles  = {
     fontSize: 14,
     color: '#757575',
     paddingBottom: '1px',
-    margin: '0px 180px 0px 0px'
+    margin: '0px 180px 0px 0px',
   },
   textField: {
     marginBottom: '10px',
@@ -128,19 +129,33 @@ class NotificationDialog extends React.Component{
           aria-labelledby="notification-dialog-title"
           aria-describedby="notification-dialog-description"
           style={styles.root}
-          maxWidth={'xs'}
+          maxWidth={'lg'}
         >
           <DialogTitle style={styles.title} id="notification-dialog-title">
             {this.state.patients.map((patientSelected, index) => (
-                <div>
-                {patientSelected.name}
+                <div key={patientSelected.name}>
+                  Adicionar comentário para {patientSelected.name}
                 </div>
             ))}
           </DialogTitle>
+
           <DialogContent>
             <Divider style={styles.divider}/>
+            
+            <TextField
+              id="outlined-multiline-static"
+              multiline
+              rows={4}
+              defaultValue=""
+              variant="outlined"
+              onChange={this.handleChange}
+              label="Digite aqui"
+              style={styles.textField}
+              fullWidth
+            />
+
           </DialogContent>
-        
+
           <DialogActions>
             <Button  disabled={this.state.loading} onClick={this.sendMessage.bind(this)} variant="contained" style={{ backgroundColor:'#00d1be', color:'white'}}>
               Enviar

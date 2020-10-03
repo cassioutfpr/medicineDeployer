@@ -17,7 +17,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import FormHelperText from '@material-ui/core/FormHelperText';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -124,9 +123,13 @@ export default function AddPatientBody(props) {
               </FormControl>
             </div>
 
-            <TextField id="phone" name="phone" type="text" label="Telefone" 
+            <TextField id="aisle" name="aisle" type="text" label="Ala" 
             className={classes.textField} onChange={props.handleChange} 
-            helperText = {props.errors.phone} error = {props.errors.phone ? true : false} variant="outlined"/>
+            helperText = {props.errors.aisle} error = {props.errors.aisle ? true : false} variant="outlined"/>
+
+            <TextField id="bed" name="bed" type="text" label="Cama" 
+            className={classes.textField} onChange={props.handleChange} 
+            helperText = {props.errors.bed} error = {props.errors.bed ? true : false} variant="outlined"/>
 
             <FormControl component="fieldset" className={classes.genderForm} onChange={props.handleChange} >
               <FormLabel component="legend">Gênero</FormLabel>

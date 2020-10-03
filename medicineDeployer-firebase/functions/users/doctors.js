@@ -118,3 +118,80 @@ exports.doctorCredentials = (request, response) => {
       		return res.status(500).json({ error: err.code });
    		});
 }
+
+exports.updateOrders = (request, response) => {
+	let patientData = {};
+	let idDocument;
+	db.collection('patients').orderBy('name').get()
+		.then(data => {
+			data.forEach(doc => {
+				patientData = doc.data();
+				idDocument = doc.id;
+				var newOrder;
+				var medicationForOrder = [];
+				patientData.medication.forEach(medication => {
+					var dateNow = new Date();
+					if(diff_hours(dateNow, medication.selectedInitialDate) > 0)
+					{
+						var added_hours = parseInt(medication.periodicity(0,2), 10);
+						var added_minutes = parseInt(medication.periodicity(3,5), 10);
+
+						medication.checkpointDate.setHours(medication.checkpointDate.getHours() + added_hours)
+						medication.checkpointDate.setMinutes(medication.checkpointDate.getHours() + added_hours)
+						
+
+						if(diff_hours(medication.checkpointDate, dateNow) > 0)
+						{
+							if(diff_hours(dateNow, medication.selectedEndDate) < 0)
+							{
+								let medication_dic = {};
+								medication_dic.name = medication.name;
+								medication_dic.id =medication.id;
+								medication_dic.selectedInitialDate = medication.selectedInitialDate;
+								medication_dic.selectedEndDate = medication.selectedEndDate;
+								medication_dic.checkpointDate =	new Date() 
+								medication_dic.periodicity = medication.periodicity;
+								medication_dic.quantity = medication.quantity;
+								medication_dic.unity = medication.unity;
+								patientData.medication.push(medication_dic)
+								db.collection('/patients').doc(idDocument).update(patientData)
+
+								medicationForOrder.append(medication_dic)
+							}
+						}
+					}
+				})
+				//!medicationForOrder.isEmpty()
+				newOrder = { 
+					associated_doctor: patientData.associated_doctor,
+					gender:patientData.gender,
+					aisle: patientData.aisle,
+					bed: patientData.bed,
+					name: patientData.name,
+					diagnosis: patientData.diagnosis,
+					medication: medicationForOrder,
+					notifications: patientData.notifications,
+					createdAt: new Date().toISOString()
+				};
+
+				db.collection('orders').add(newOrder)
+				.then(doc => {
+					response.json({ message: `${doc.id}`})
+				})
+				.catch(err => {
+					response.status(500).json({error: 'something went wrong'}); //500 internal server error
+					console.error(err);
+				})
+			})
+		})
+		.catch(err => {
+			console.error(err);
+		})
+}
+
+
+const diff_hours = (dt2, dt1) => {
+	var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+	diff /= (60 * 60);
+	return Math.abs(Math.round(diff));
+}

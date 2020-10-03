@@ -9,8 +9,8 @@ const cors = require('cors')({origin: true});
 const { getAllPatients, addOnePatient, deletePatient, getPatient, 
 		addDiagnosisToPatient, addMedicationToPatient, getAllDiagnosis,
 		getAllMedication, getDiagnosisSearch, 
-		getMedicationSearch } = require('./users/patients')
-const { signupDoctor, loginDoctor, doctorCredentials } = require('./users/doctors')
+		getMedicationSearch, sendNotification } = require('./users/patients')
+const { signupDoctor, loginDoctor, doctorCredentials, updateOrders } = require('./users/doctors')
 
 const FBAuth = require('./util/fbAuth');
 
@@ -29,6 +29,7 @@ app.post('/patients', FBAuth,addOnePatient);
 app.delete('/patients/:patientId', FBAuth, deletePatient);
 app.post('/patients/addDiagnosis/:patientId', FBAuth, addDiagnosisToPatient);
 app.post('/patients/addMedication/:patientId', FBAuth, addMedicationToPatient);
+app.post('/patients/sendNotification', FBAuth,sendNotification);
 
 //Doctor credentials 
 app.get('/doctor', FBAuth, doctorCredentials)
@@ -38,6 +39,9 @@ app.post('/signupDoctor', signupDoctor);
 
 //Login routine
 app.post('/loginDoctor', loginDoctor);
+
+//UpdateOrders
+app.get('/updateOrders', FBAuth, updateOrders);
 
 app.use(cors);
 

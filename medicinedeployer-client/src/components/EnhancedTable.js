@@ -18,6 +18,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import NotificationDialog from './NotificationDialog';
 import Button from '@material-ui/core/Button';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import axios from 'axios'
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -48,8 +49,8 @@ function stableSort(array, comparator) {
 const headCells = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Nome' },
   { id: 'age', numeric: true, disablePadding: false, label: 'Idade' },
-  { id: 'diagnosis', numeric: true, disablePadding: false, label: 'Diagnóstico' },
-  { id: 'medication', numeric: true, disablePadding: false, label: 'Medicação' },
+  { id: 'aisle', numeric: true, disablePadding: false, label: 'Ala' },
+  { id: 'bed', numeric: true, disablePadding: false, label: 'Cama' },
 ];
 
 const patientsSelected = [];
@@ -147,7 +148,15 @@ const EnhancedTableToolbar = (props) => {
   }
 
   const handleClickOpen = () => {
-
+    let ids = patientsSelected[0].patientId
+    axios.delete(`/patients/${ids}`, {headers: {Authorization: localStorage.FBIdToken}})
+      .then(res => {
+        props.removeDeletedPatient(patientsSelected[0].patientId)
+        props.getPatients()
+      })
+      .catch((err) => {
+        console.log('Could not delete patient.')
+      });
   }
 
   return (
@@ -167,7 +176,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       )}
       <NotificationDialog patientsSelected={patientsSelected}/>
-      <Button className={classes.deleteButton} disabled={isEmpty(patientsSelected)} style={isEmpty(patientsSelected)? {backgroundColor: '#757575'}: {backgroundColor: 'red'}} onClick={handleClickOpen()}>
+      <Button className={classes.deleteButton} disabled={isEmpty(patientsSelected)} style={isEmpty(patientsSelected)? {backgroundColor: '#757575'}: {backgroundColor: 'red'}} onClick={handleClickOpen}>
           <DeleteForeverIcon style={{fill: "white"}}/>
       </Button>
     </Toolbar>
@@ -267,14 +276,21 @@ export default function EnhancedTable(props) {
       patientsSelected.push(row)  
     }
     else{
-      const selectedIndexFromPatientSelected = patientsSelected.indexOf(row);
-      if (selectedIndexFromPatientSelected > -1) {
-        patientsSelected.splice(selectedIndexFromPatientSelected, 1);
-      }
+      patientsSelected.splice(0, 1);
     }
 
     setSelected(newSelected);
   };
+
+  const removeDeletedPatient = (patientName) => {
+    const selectedIndex = selected.indexOf(patientName);
+      
+    const selectedIndexFromPatientSelected = patientsSelected.indexOf(patientName);
+    patientsSelected.splice(0, selectedIndexFromPatientSelected);
+    patientsSelected.splice(selectedIndexFromPatientSelected+1);
+
+    setSelected([]);
+  }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -314,7 +330,7 @@ export default function EnhancedTable(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} title={props.title}/>
+        <EnhancedTableToolbar numSelected={selected.length} title={props.title} getPatients={props.getPatients} removeDeletedPatient={removeDeletedPatient}/>
         <TableContainer>
           <Table
             className={classes.table}
@@ -360,8 +376,8 @@ export default function EnhancedTable(props) {
                         {row.name}
                       </TableCell>
                       <TableCell align="right">{calculateAge(row.date_of_birth)}</TableCell>
-                      <TableCell align="right">{row.diagnosis}</TableCell>
-                      <TableCell align="right">{row.medication}</TableCell>
+                      <TableCell align="right">{row.aisle}</TableCell>
+                      <TableCell align="right">{row.bed}</TableCell>
                     </TableRow>
                   );
                 })}

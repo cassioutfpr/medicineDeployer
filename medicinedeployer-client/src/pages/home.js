@@ -79,7 +79,7 @@ class home extends React.Component{
 					<Grid container className={classes.patientsGrid}>
 						<Grid className={classes.tables} item xs={2}/>
                     	<Grid className={classes.tables} item xs={10}>
-                        	{loading && this.isEmpty(this.props.data.patients) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTable patients={this.props.data.patients} title="Lista Completa de Pacientes" />}
+                        	{loading && this.isEmpty(this.props.data.patients) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTable patients={this.props.data.patients} title="Lista Completa de Pacientes" getPatients={this.props.getPatients}/>}
                     	</Grid>
 					</Grid>
 			 	</div>
@@ -97,7 +97,7 @@ class home extends React.Component{
 					<Grid container className={classes.patientsGrid}>
 						<Grid className={classes.tables} item xs={2}/>
                     	<Grid className={classes.tables} item xs={10}>
-                        	{loading && this.isEmpty(this.props.data.patients) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTable patients={this.props.data.patients} title="Lista Completa de Pacientes" />}
+                        	{loading && this.isEmpty(this.props.data.patients) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTable patients={this.props.data.patients} title="Lista Completa de Pacientes" getPatients={this.props.getPatients}/>}
                     	</Grid>
 					</Grid>
 			 	</div>
@@ -114,7 +114,7 @@ class home extends React.Component{
 					</Grid>
 					<Grid container className={classes.patientsGrid}>
                     	<Grid className={classes.tables} item xs={12}>
-                        	{loading && this.isEmpty(this.props.data.patients) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTable patients={this.props.data.patients} title="Lista Completa de Pedidos" />}
+                        	{loading && this.isEmpty(this.props.data.patients) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTable patients={this.props.data.patients} title="Lista Completa de Pedidos" getPatients={this.props.getPatients}/>}
                     	</Grid>
 					</Grid>
 			 	</div>

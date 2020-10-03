@@ -9,7 +9,6 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
-import InputBase from '@material-ui/core/InputBase';
 import AppIcon from '../images/iconPill.png'
 
 //Redux

@@ -9,9 +9,10 @@ exports.getAllPatients = (request, response) => {
 			data.forEach(doc => {
 				//iterating through array of docs
 				patients.push({
-					diagnosis: doc.data().diagnosis[0].name, //reference that the doc has. It is not in doc.data()
+					patientId: doc.id, //reference that the doc has. It is not in doc.data()
+					aisle: doc.data().aisle, //reference that the doc has. It is not in doc.data()
 					name: doc.data().name,
-					medication: doc.data().medication[0].name,
+					bed: doc.data().bed,
 					date_of_birth: doc.data().date_of_birth,
 				});
 			});
@@ -29,7 +30,8 @@ exports.addOnePatient = (request,response) => {
 		cpf: request.body.cpf,
 		gender: request.body.gender,
 		date_of_birth: request.body.date_of_birth,
-		phone: request.body.phone,
+		aisle: request.body.aisle,
+		bed: request.body.bed,
 		email: request.body.email,
 		city: request.body.city,
 		state: request.body.state,
@@ -37,6 +39,12 @@ exports.addOnePatient = (request,response) => {
 		score: request.body.score,
 		diagnosis: [],
 		medication: [],
+		notifications: [{
+			associated_doctor: request.user.login,
+			createdAt: new Date().toISOString(),
+			message: `Bem-vindo ao medicineDeployer, ${request.body.name}!`,
+			read: false
+		}],
 		createdAt: new Date().toISOString()
 	};
 
@@ -188,13 +196,19 @@ exports.addMedicationToPatient = (request, response) => {
 			}
 			patientData = doc.data();
 			idDocument = doc.id;
-			request.body.medication.forEach(medicationName => {
-				db.collection('medication').where('name', '==', medicationName).limit(1).get()
+			request.body.medication.forEach(medication => {
+				db.collection('medication').where('name', '==', medication.name).limit(1).get()
 				.then(data =>{
-					let medication = {};
-					medication.name = data.docs[0].data().name;
-					medication.id = data.docs[0].data().id;
-					patientData.medication.push(medication)
+					let medication_dic = {};
+					medication_dic.name = data.docs[0].data().name;
+					medication_dic.id = data.docs[0].data().id;
+					medication_dic.selectedInitialDate = medication.selectedInitialDate;
+					medication_dic.selectedEndDate = medication.selectedEndDate;
+					medication_dic.checkpointDate =	new Date() 
+					medication_dic.periodicity = medication.periodicity;
+					medication_dic.quantity = medication.quantity;
+					medication_dic.unity = medication.unity;
+					patientData.medication.push(medication_dic)
 					promises.push(db.collection('/patients').doc(idDocument).update(patientData))
 				})
 				.catch(err => {
@@ -251,5 +265,48 @@ exports.getMedicationSearch = (request, response) => {
     	})
 		.catch(err => {
 			response.status(500).json({error: err.code});
+		})
+}
+
+exports.sendNotification = (request, response) => {
+	var promises = [];
+
+	let patientData = {};
+
+	const newNotification = {
+		associated_doctor: request.user.login,
+		message: request.body.message,
+		createdAt: new Date().toISOString(),
+		read: false
+	}
+
+    for(var prop in request.body.ids) {
+        if(!request.body.ids.hasOwnProperty(prop))
+            return response.status(404).json({error: 'Escolha um paciente para enviar'});
+    }
+
+	request.body.ids.forEach(id => {
+		db.doc(`/patients/${id}`).get()
+			.then(doc => {
+				if(!doc.exists){
+					return response.status(404).json({error: 'Paciente não encontrado'});
+				}
+				patientData = doc.data();
+				patientData.notifications.push(newNotification)
+				promises.push(db.collection('/patients').doc(doc.id).update(patientData));
+			})
+			.catch(err => {
+				console.error(err)
+				return response.status(500).json({error: err.code});
+			})
+	});
+
+	Promise.all(promises)
+		.then(data => {
+			return response.json({message: 'Notificação enviada com sucesso'});
+		})
+		.catch(err => {
+			console.error(err)
+			return response.status(500).json({error: err.code});
 		})
 }

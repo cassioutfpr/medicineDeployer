@@ -110,8 +110,11 @@ exports.validateAddPatientData = (data) => {
 	if(isEmpty(data.date_of_birth)){
 		errors.date_of_birth = 'Escolha uma data';
 	}
-	if(isEmpty(data.phone)){
-		errors.phone = 'Não pode ser vazio';
+	if(isEmpty(data.aisle)){
+		errors.aisle = 'Não pode ser vazio';
+	}
+	if(isEmpty(data.bed)){
+		errors.bed = 'Não pode ser vazio';
 	}
 	if(isEmpty(data.city)){
 		errors.city = 'Não pode ser vazio';
