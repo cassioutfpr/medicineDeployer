@@ -1,5 +1,12 @@
-const admin = require('firebase-admin'); //access to the database
-admin.initializeApp(); //To use the admin, it's necessary to initialize the app ==> .firebasescr
+console.log("opa" + process.cwd());
+
+var admin = require('firebase-admin');    
+var serviceAccount = require("../serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://medicinedeployer.firebaseio.com"
+});
 
 const db = admin.firestore(); 
 module.exports = { admin, db }

@@ -8,6 +8,7 @@ import SelectedListItemPharmaceutical from '../components/SelectedListItemPharma
 import CustomizedTables from '../components/CustomizedTables'
 import PatientGeneralInfo from '../components/PatientGeneralInfo'
 import EnhancedTable from '../components/EnhancedTable'
+import EnhancedTableOrders from '../components/EnhancedTableOrders'
 import SupportDialog from '../components/SupportDialog'
 
 //MUI
@@ -17,7 +18,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 //Redux stuff
 import { connect } from 'react-redux';
-import { getPatients } from '../redux/actions/dataActions';
+import { getPatients, getOrders } from '../redux/actions/dataActions';
 
 const styles = {
 	generalInfo:{
@@ -60,6 +61,7 @@ class home extends React.Component{
 
   	componentDidMount(){
   		this.props.getPatients();
+  		this.props.getOrders();
 	}
 
   	handleChange = value => this.setState({itemSelectedList: value})
@@ -114,7 +116,7 @@ class home extends React.Component{
 					</Grid>
 					<Grid container className={classes.patientsGrid}>
                     	<Grid className={classes.tables} item xs={12}>
-                        	{loading && this.isEmpty(this.props.data.patients) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTable patients={this.props.data.patients} title="Lista Completa de Pedidos" getPatients={this.props.getPatients}/>}
+                        	{loading && this.isEmpty(this.props.data.orders) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTableOrders orders={this.props.data.orders} title="Lista Completa de Pedidos" getPatients={this.props.getPatients}/>}
                     	</Grid>
 					</Grid>
 			 	</div>
@@ -125,6 +127,7 @@ class home extends React.Component{
 home.propTypes = {
 	classes: PropTypes.object.isRequired,
 	getPatients: PropTypes.func.isRequired,
+	getOrders: PropTypes.func.isRequired,
 	data: PropTypes.object.isRequired,
 	UI: PropTypes.object.isRequired,
 }
@@ -135,7 +138,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapActionsToProps = {
-	getPatients
+	getPatients,
+	getOrders
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(home))
