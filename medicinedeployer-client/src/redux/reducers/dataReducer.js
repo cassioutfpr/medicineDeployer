@@ -1,4 +1,4 @@
-import { SET_PATIENTS } from '../types';
+import { SET_PATIENTS, SET_ORDERS } from '../types';
 
 const initialState = {
 	patients: [],

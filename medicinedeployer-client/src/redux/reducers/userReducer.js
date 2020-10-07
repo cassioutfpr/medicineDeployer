@@ -4,6 +4,7 @@ const initialState = {
 	authenticated: false,
 	credentials: "",
 	profession: "",
+	FBIdToken: ""
 }
 
 export default function(state = initialState, action){

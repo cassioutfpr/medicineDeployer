@@ -5,11 +5,11 @@ export const loginUser = (userData, history) => (dispatch) => {
 	dispatch({ type: LOADING_UI });
 	axios.post('/loginDoctor', userData)
 		.then(res => {
-			const FBIdToken = `Bearer ${res.data.token}`;
-			localStorage.setItem('FBIdToken', FBIdToken);
-			dispatch(getUserData());
-			dispatch({ type: CLEAR_ERRORS });
 			history.push('/'); //This method is used to push state and url (path) -> Goes to the home page
+			var FBIdToken = `Bearer ${res.data.token}`;
+			localStorage.setItem('FBIdToken', FBIdToken);
+			dispatch(getUserData(FBIdToken));
+			dispatch({ type: CLEAR_ERRORS });
 		})
     	.catch((err) => {
       		dispatch({
@@ -39,12 +39,12 @@ export const signupUser = (newUserData, history) => (dispatch) => {
 export const logoutUser = () => (dispatch) => {
 	localStorage.removeItem('FBIdToken');
 	//delete axios.defaults.headers.common['Authorization']
-	console.log('logour');
+	//console.log('logour');
 	dispatch({ type: SET_UNAUTHENTICATED });
 }
 
-export const getUserData = () => (dispatch) => {
-	axios.get('/doctor', {headers: {Authorization: localStorage.FBIdToken}})
+export const getUserData = (token) => (dispatch) => {
+	axios.get('/doctor', {headers: {Authorization: token}})
 		.then(res => {
 			localStorage.setItem('credentials', res.data.credentials);
 			localStorage.setItem('profession', res.data.profession);

@@ -15,10 +15,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import NotificationDialog from './NotificationDialog';
+import NotificationSendMedication from './NotificationSendMedication';
 import Button from '@material-ui/core/Button';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import axios from 'axios'
+
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -48,7 +49,7 @@ function stableSort(array, comparator) {
 
 const headCells = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Nome' },
-  { id: 'id', numeric: true, disablePadding: false, label: 'ID Pedido' },
+  { id: 'orderId', numeric: true, disablePadding: false, label: 'ID Pedido' },
   { id: 'aisle', numeric: true, disablePadding: false, label: 'Ala' },
   { id: 'bed', numeric: true, disablePadding: false, label: 'Cama' },
 ];
@@ -175,11 +176,11 @@ const EnhancedTableToolbar = (props) => {
           {props.title}
         </Typography>
       )}
+      <NotificationSendMedication ordersSelected={ordersSelected} getOrders = {props.getOrders} clearSelectedOrders = {props.clearSelectedOrders}/>
     </Toolbar>
   );
 };
 
-// 178<NotificationDialog ordersSelected={ordersSelected}/>
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
@@ -221,7 +222,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function EnhancedTable(props) {
+export default function EnhancedTableOrders(props) {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -252,11 +253,11 @@ export default function EnhancedTable(props) {
   };
 
   const handleClick = (event, row, isItemSelected) => {
-    const selectedIndex = selected.indexOf(row.name);
+    const selectedIndex = selected.indexOf(row.orderId);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, row.name);
+      newSelected = newSelected.concat(selected, row.orderId);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -279,15 +280,10 @@ export default function EnhancedTable(props) {
     setSelected(newSelected);
   };
 
-  /*const removeDeletedPatient = (patientName) => {
-    const selectedIndex = selected.indexOf(patientName);
-      
-    const selectedIndexFromOrdersSelected = ordersSelected.indexOf(patientName);
-    ordersSelected.splice(0, selectedIndexFromOrdersSelected);
-    ordersSelected.splice(selectedIndexFromOrdersSelected+1);
-
+  const clearSelectedOrders = (patientName) => {
+    ordersSelected.splice(0, 1)
     setSelected([]);
-  }*/
+  }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -300,12 +296,25 @@ export default function EnhancedTable(props) {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  const isEmpty = (obj)  => {
+      for(var prop in obj) {
+          if(obj.hasOwnProperty(prop))
+              return false;
+      }
+      return true;
+  };
+
+  if(isEmpty(ordersInfo))
+  {
+    return(<div></div>) 
+  }
+
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, ordersInfo.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} title={props.title} getOrders={props.getOrders} removeDeletedPatient={removeDeletedPatient}/>
+        <EnhancedTableToolbar numSelected={selected.length} title={props.title} getOrders={props.getOrders} clearSelectedOrders={clearSelectedOrders}/>
         <TableContainer>
           <Table
             className={classes.table}
@@ -327,7 +336,7 @@ export default function EnhancedTable(props) {
               {stableSort(ordersInfo, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.orderId);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
@@ -337,7 +346,7 @@ export default function EnhancedTable(props) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.orderId}
                       selected={isItemSelected}
                       className={classes.tableRow}
                     >
@@ -350,7 +359,7 @@ export default function EnhancedTable(props) {
                       <TableCell component="th" id={labelId} scope="row" padding="none">
                         {row.name}
                       </TableCell>
-                      <TableCell align="right">{row.id}</TableCell>
+                      <TableCell align="right">{row.orderId}</TableCell>
                       <TableCell align="right">{row.aisle}</TableCell>
                       <TableCell align="right">{row.bed}</TableCell>
                     </TableRow>

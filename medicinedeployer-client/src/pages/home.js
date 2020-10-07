@@ -48,6 +48,7 @@ class home extends React.Component{
   		this.state = {
   			itemSelectedList: 'list_of_patients',
   			patientsInfo: {},
+  			ordersInfo: {},
   		}
   	}
 
@@ -60,8 +61,14 @@ class home extends React.Component{
   	}
 
   	componentDidMount(){
-  		this.props.getPatients();
-  		this.props.getOrders();
+  		if(localStorage.profession === 'doctor')
+  		{
+  			this.props.getPatients();
+  		}
+  		else
+  		{
+  			this.props.getOrders();
+  		}
 	}
 
   	handleChange = value => this.setState({itemSelectedList: value})
@@ -116,7 +123,7 @@ class home extends React.Component{
 					</Grid>
 					<Grid container className={classes.patientsGrid}>
                     	<Grid className={classes.tables} item xs={12}>
-                        	{loading && this.isEmpty(this.props.data.orders) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTableOrders orders={this.props.data.orders} title="Lista Completa de Pedidos" getPatients={this.props.getPatients}/>}
+                        	{loading && this.isEmpty(this.props.data.orders) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTableOrders orders={this.props.data.orders} title="Lista Completa de Pedidos" getOrders={this.props.getOrders}/>}
                     	</Grid>
 					</Grid>
 			 	</div>

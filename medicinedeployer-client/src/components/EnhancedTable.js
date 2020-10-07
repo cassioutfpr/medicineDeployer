@@ -301,6 +301,19 @@ export default function EnhancedTable(props) {
     setPage(0);
   };
 
+    const isEmpty = (obj)  => {
+      for(var prop in obj) {
+          if(obj.hasOwnProperty(prop))
+              return false;
+      }
+      return true;
+  };
+
+  if(isEmpty(patientsInfo))
+  {
+    return(<div></div>) 
+  }
+
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, patientsInfo.length - page * rowsPerPage);
