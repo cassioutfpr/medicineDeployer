@@ -12,6 +12,8 @@ const { getAllPatients, addOnePatient, deletePatient, getPatient,
 		getMedicationSearch, sendNotification } = require('./users/patients')
 const { signupDoctor, loginDoctor, doctorCredentials, updateOrders, getAllOrders, orderSentFromPharmaceutical } = require('./users/doctors')
 
+const { getSentOrders, deliveringOrder, orderDelivered } = require('./users/robot')
+
 const FBAuth = require('./util/fbAuth');
 
 //getting colletion documents from http get  ===> https://firebase.google.com/docs/firestore/query-data/get-data
@@ -44,6 +46,12 @@ app.post('/loginDoctor', loginDoctor);
 app.get('/updateOrders', updateOrders);
 app.get('/getOrders', getAllOrders);
 app.post('/doctors/orderSentFromPharmaceutical/:id', FBAuth, orderSentFromPharmaceutical)
+
+//getOrdersFromPharmaceutical
+app.get('/robot/getSentOrders', getSentOrders)
+app.post('/robot/deliveringOrder/:id', deliveringOrder)
+app.post('/robot/orderDelivered/:id', orderDelivered)
+
 
 app.use(cors);
 
