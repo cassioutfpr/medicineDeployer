@@ -42,7 +42,7 @@ exports.addOnePatient = (request,response) => {
 		notifications: [{
 			associated_doctor: request.user.login,
 			createdAt: new Date().toISOString(),
-			message: `${request.body.name} adicionado por ${request.body.associated_doctor}`,
+			message: `${request.body.name} adicionado por ${request.user.login}`,
 			read: false
 		}],
 		createdAt: new Date().toISOString()
