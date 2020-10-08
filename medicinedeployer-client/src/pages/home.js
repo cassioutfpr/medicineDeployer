@@ -68,8 +68,14 @@ class home extends React.Component{
   		else
   		{
   			this.props.getOrders();
+  			this.timer = setInterval(()=> this.props.getOrders(), 30000);
   		}
 	}
+
+	componentWillUnmount() {
+  		this.timer = null; // here...
+	}
+
 
   	handleChange = value => this.setState({itemSelectedList: value})
 

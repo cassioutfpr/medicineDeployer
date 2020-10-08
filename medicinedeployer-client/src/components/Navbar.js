@@ -90,6 +90,7 @@ class Navbar extends Component {
   
   render(){
     const { classes } = this.props;
+    const profession = (localStorage.profession === 'doctor' ? 'Dr.' : 'Farmaceutico');
     return(
       <div className={classes.grow}>
         <AppBar className={classes.appBar} position="static">
@@ -97,7 +98,7 @@ class Navbar extends Component {
           <Grid container alignItems="center">
             <Grid className={classes.selectedList} item xs={2}>
               <Typography className={classes.doctorName} noWrap>
-                Dr.
+                {profession}
                 <br/>
                 {localStorage.credentials} 
               </Typography>
