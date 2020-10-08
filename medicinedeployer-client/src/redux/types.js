@@ -9,3 +9,4 @@ export const LOADING_UI = 'LOADING_UI';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 //Data reducer typess
 export const SET_PATIENTS = 'SET_PATIENTS';
+export const SET_ORDERS = 'SET_ORDERS';

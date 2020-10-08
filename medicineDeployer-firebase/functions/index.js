@@ -10,7 +10,9 @@ const { getAllPatients, addOnePatient, deletePatient, getPatient,
 		addDiagnosisToPatient, addMedicationToPatient, getAllDiagnosis,
 		getAllMedication, getDiagnosisSearch, 
 		getMedicationSearch, sendNotification } = require('./users/patients')
-const { signupDoctor, loginDoctor, doctorCredentials, updateOrders } = require('./users/doctors')
+const { signupDoctor, loginDoctor, doctorCredentials, updateOrders, getAllOrders, orderSentFromPharmaceutical } = require('./users/doctors')
+
+const { getSentOrders, deliveringOrder, orderDelivered } = require('./users/robot')
 
 const FBAuth = require('./util/fbAuth');
 
@@ -41,7 +43,15 @@ app.post('/signupDoctor', signupDoctor);
 app.post('/loginDoctor', loginDoctor);
 
 //UpdateOrders
-app.get('/updateOrders', FBAuth, updateOrders);
+app.get('/updateOrders', updateOrders);
+app.get('/getOrders', getAllOrders);
+app.post('/doctors/orderSentFromPharmaceutical/:id', FBAuth, orderSentFromPharmaceutical)
+
+//getOrdersFromPharmaceutical
+app.get('/robot/getSentOrders', getSentOrders)
+app.post('/robot/deliveringOrder/:id', deliveringOrder)
+app.post('/robot/orderDelivered/:id', orderDelivered)
+
 
 app.use(cors);
 

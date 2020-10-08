@@ -42,7 +42,7 @@ exports.addOnePatient = (request,response) => {
 		notifications: [{
 			associated_doctor: request.user.login,
 			createdAt: new Date().toISOString(),
-			message: `Bem-vindo ao medicineDeployer, ${request.body.name}!`,
+			message: `${request.body.name} adicionado por ${request.user.login}`,
 			read: false
 		}],
 		createdAt: new Date().toISOString()
@@ -196,6 +196,8 @@ exports.addMedicationToPatient = (request, response) => {
 			}
 			patientData = doc.data();
 			idDocument = doc.id;
+			var date_now = new Date()
+			date_now.setHours(date_now.getHours() - 24)
 			request.body.medication.forEach(medication => {
 				db.collection('medication').where('name', '==', medication.name).limit(1).get()
 				.then(data =>{
@@ -204,7 +206,7 @@ exports.addMedicationToPatient = (request, response) => {
 					medication_dic.id = data.docs[0].data().id;
 					medication_dic.selectedInitialDate = medication.selectedInitialDate;
 					medication_dic.selectedEndDate = medication.selectedEndDate;
-					medication_dic.checkpointDate =	new Date() 
+					medication_dic.checkpointDate =	date_now.toISOString();
 					medication_dic.periodicity = medication.periodicity;
 					medication_dic.quantity = medication.quantity;
 					medication_dic.unity = medication.unity;
