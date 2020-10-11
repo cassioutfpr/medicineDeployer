@@ -119,17 +119,44 @@ exports.doctorCredentials = (request, response) => {
    		});
 }
 
-exports.updateOrders = (request, response) => {
-	let patientData = {};
-	let idDocument;
-	db.collection('patients').orderBy('name').get()
-		.then(data => {
-			data.forEach(doc => {
-				patientData = doc.data();
-				idDocument = doc.id;
-				var newOrder;
-				var medicationForOrder = [];
-				var list_of_medications = [];
+const order = require("../model/order");
+
+exports.updateOrders = () => {
+	var ordersPerAisle = [];
+
+	db.collection('patients').orderBy('aisle').get()
+		.then(patients => {
+			patients.forEach(patient => {
+				patient.data().medication.forEach(medication => {
+					if(!shouldAddMedicationToOrder(medication)) {
+						return;
+					}
+
+					var aisle = patient.data().aisle;
+
+					if(!(aisle in ordersPerAisle)) {
+						ordersPerAisle[aisle] = order.initializeNewOrder(aisle)
+					}
+
+					ordersPerAisle[aisle].addMedication(medication);
+				})
+			})
+		});
+}
+
+function shouldAddMedicationToOrder(medication) {
+	medicationDate = new Date(medication.selectedInitialDate)
+	medicationEndDate = new Date(medication.selectedEndDate)
+}
+
+exports.updateOrders2 = (request, response) => {
+	var ordersPerAisle = [];
+
+	db.collection('patients').orderBy('aisle').get()
+		.then(patients => {
+			patients.forEach(patient => {
+
+
 				patientData.medication.forEach(medication => {
 					var dateNow = new Date();
 					var medication_dic = {};
@@ -218,13 +245,11 @@ exports.getAllOrders = (request, response) => {
 				{
 					orders.push({
 						orderId: doc.id, //reference that the doc has. It is not in doc.data()
-						aisle: doc.data().aisle, //reference that the doc has. It is not in doc.data()
+						aisle: doc.data().aisle,
 						name: doc.data().name,
 						bed: doc.data().bed,
 						associated_doctor: doc.data().associated_doctor,
 						gender:doc.data().gender,
-						aisle: doc.data().aisle,
-						bed: doc.data().bed,
 						diagnosis: doc.data().diagnosis,
 						medication: doc.data().medication,
 						notifications: doc.data().notifications,
