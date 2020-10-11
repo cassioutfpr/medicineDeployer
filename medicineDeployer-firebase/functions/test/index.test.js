@@ -5,6 +5,7 @@ const test = require('firebase-functions-test')({
   projectId: 'medicinedeployer',
 }, 'test/medicinedeployer-959ec44eccb6.json');
 
-const myFunctions = require('../index.js');
+const { admin, db } = require('../util/admin');
+const orderTest = require('./order.test');
 
-console.log(myFunctions.updateOrders(null, null));
+orderTest.testUpdateOrders();

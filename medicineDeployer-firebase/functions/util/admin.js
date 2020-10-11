@@ -1,6 +1,4 @@
-console.log("opa" + process.cwd());
-
-var admin = require('firebase-admin');    
+var admin = require('firebase-admin');
 var serviceAccount = require("../serviceAccountKey.json");
 
 admin.initializeApp({
