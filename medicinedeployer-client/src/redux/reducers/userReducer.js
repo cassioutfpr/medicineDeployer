@@ -4,6 +4,7 @@ const initialState = {
 	authenticated: false,
 	credentials: "",
 	profession: "",
+	hospital: "",
 	FBIdToken: ""
 }
 

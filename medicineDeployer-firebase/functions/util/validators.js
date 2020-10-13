@@ -62,6 +62,10 @@ exports.validateSignUpData = (data) => {
 				errors.crm = 'Não pode ser vazio';
 		}
 	}
+	if(isEmpty(data.hospital)){
+		errors.hospital = 'Não pode ser vazio';
+	}
+
 
 	//Object is a javascript class
 	return {

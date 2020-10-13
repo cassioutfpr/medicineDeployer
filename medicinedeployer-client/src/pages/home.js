@@ -9,6 +9,7 @@ import CustomizedTables from '../components/CustomizedTables'
 import PatientGeneralInfo from '../components/PatientGeneralInfo'
 import EnhancedTable from '../components/EnhancedTable'
 import EnhancedTableOrders from '../components/EnhancedTableOrders'
+import EnhancedTableDeliveredOrders from '../components/EnhancedTableDeliveredOrders'
 import SupportDialog from '../components/SupportDialog'
 
 //MUI
@@ -18,7 +19,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 //Redux stuff
 import { connect } from 'react-redux';
-import { getPatients, getOrders } from '../redux/actions/dataActions';
+import { getPatients, getOrders, getDeliveredOrders } from '../redux/actions/dataActions';
 
 const styles = {
 	generalInfo:{
@@ -63,17 +64,26 @@ class home extends React.Component{
   	componentDidMount(){
   		if(localStorage.profession === 'doctor')
   		{
+  			clearInterval(this.interval);
   			this.props.getPatients();
+  			//this.state.opabeleza = null;
   		}
-  		else
+  		else if(localStorage.profession === 'pharmaceutical')
   		{
+  			//this.interval = null;
   			this.props.getOrders();
-  			this.timer = setInterval(()=> this.props.getOrders(), 30000);
+  			this.interval = setInterval(()=> this.props.getOrders(), 5000);
+  		}
+  		else if(localStorage.profession === 'admin')
+  		{
+  			//this.interval = null;
+  			this.props.getDeliveredOrders();
+  			this.interval = setInterval(()=> this.props.getDeliveredOrders(), 5000);
   		}
 	}
 
 	componentWillUnmount() {
-  		this.timer = null; // here...
+		clearInterval(this.interval);
 	}
 
 
@@ -117,7 +127,7 @@ class home extends React.Component{
 					</Grid>
 			 	</div>
 			);
-		else
+		else if(localStorage.profession === 'pharmaceutical')
 			return(
 			  	<div>
 			    	<Navbar />
@@ -134,6 +144,24 @@ class home extends React.Component{
 					</Grid>
 			 	</div>
 			);
+		else if(localStorage.profession === 'admin')
+			return(
+			  	<div>
+			    	<Navbar />
+			    	<Grid container>
+				  		<Grid className={classes.selectedList} item xs={2}>
+				  			<SelectedListItem itemSelectedList={this.state.itemSelectedList} onChange={this.handleChange}/>
+				  			<SupportDialog/>
+				  		</Grid>
+				  	</Grid>	
+					<Grid container className={classes.patientsGrid}>
+						<Grid className={classes.tables} item xs={2}/>
+                    	<Grid className={classes.tables} item xs={10}>
+                        	{loading && this.isEmpty(this.props.data.orders) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTableOrders orders={this.props.data.orders} title="Lista Completa de Pedidos Entregues" getOrders={this.props.getDeliveredOrders}/>}
+                    	</Grid>
+					</Grid>
+			 	</div>
+			);
 	}
 }
 
@@ -141,6 +169,7 @@ home.propTypes = {
 	classes: PropTypes.object.isRequired,
 	getPatients: PropTypes.func.isRequired,
 	getOrders: PropTypes.func.isRequired,
+	getDeliveredOrders: PropTypes.func.isRequired,
 	data: PropTypes.object.isRequired,
 	UI: PropTypes.object.isRequired,
 }
@@ -152,7 +181,8 @@ const mapStateToProps = (state) => ({
 
 const mapActionsToProps = {
 	getPatients,
-	getOrders
+	getOrders,
+	getDeliveredOrders
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(home))

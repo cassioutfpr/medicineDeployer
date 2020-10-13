@@ -14,6 +14,8 @@ const { signupDoctor, loginDoctor, doctorCredentials, updateOrders, getAllOrders
 
 const { getSentOrders, deliveringOrder, orderDelivered } = require('./users/robot')
 
+const { getDeliveredOrders } = require('./users/admin')
+
 const FBAuth = require('./util/fbAuth');
 
 //getting colletion documents from http get  ===> https://firebase.google.com/docs/firestore/query-data/get-data
@@ -52,6 +54,8 @@ app.get('/robot/getSentOrders', getSentOrders)
 app.post('/robot/deliveringOrder/:id', deliveringOrder)
 app.post('/robot/orderDelivered/:id', orderDelivered)
 
+
+app.get('/admin/getDeliveredOrders', getDeliveredOrders)
 
 app.use(cors);
 

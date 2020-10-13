@@ -7,6 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import ListIcon from '@material-ui/icons/List';
 import AddPatient from './AddPatient'
+import AddStaff from './AddStaff'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,11 +32,25 @@ export default function SelectedListItem(props) {
       props.onChange('add_patient');
   };
 
-  return (
-    <div className={classes.root}>
-      <List component="nav">        
-        <AddPatient handleListItemClick={handleListItemClick} selectedIndex={selectedIndex}/>
-      </List>
-    </div>
-  );
+  if(localStorage.profession === 'doctor')
+  {
+    return (
+      <div className={classes.root}>
+        <List component="nav">        
+          <AddPatient handleListItemClick={handleListItemClick} selectedIndex={selectedIndex}/>
+        </List>
+      </div>
+    );
+  }
+
+  if(localStorage.profession === 'admin')
+  {
+    return (
+      <div className={classes.root}>
+        <List component="nav">        
+          <AddStaff handleListItemClick={handleListItemClick} selectedIndex={selectedIndex}/>
+        </List>
+      </div>
+    );
+  }
 }

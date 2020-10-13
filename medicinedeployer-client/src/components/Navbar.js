@@ -90,7 +90,15 @@ class Navbar extends Component {
   
   render(){
     const { classes } = this.props;
-    const profession = (localStorage.profession === 'doctor' ? 'Dr.' : 'Farmaceutico');
+    var profession;
+
+    if(localStorage.profession === 'doctor')
+      profession = 'Dr.'
+    if(localStorage.profession === 'pharmaceutical')
+      profession = 'Farmaceutico'
+    if(localStorage.profession === 'admin')
+      profession = 'Administrador'
+
     return(
       <div className={classes.grow}>
         <AppBar className={classes.appBar} position="static">

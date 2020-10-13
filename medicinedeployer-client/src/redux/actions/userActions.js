@@ -48,6 +48,7 @@ export const getUserData = (token) => (dispatch) => {
 		.then(res => {
 			localStorage.setItem('credentials', res.data.credentials);
 			localStorage.setItem('profession', res.data.profession);
+			localStorage.setItem('hospital', res.data.hospital);
 			dispatch({
 				type: SET_USER,
 				payload: res.data,

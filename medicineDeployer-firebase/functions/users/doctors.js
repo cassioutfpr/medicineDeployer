@@ -19,6 +19,7 @@ exports.signupDoctor = (request, response) => {
 		crm: request.body.crm,
 		cpf: request.body.cpf,
 		profession: request.body.profession,
+		hospital: request.body.hospital,
 	};
 
 	const { valid, errors } = validateSignUpData(newUser); 
@@ -50,7 +51,9 @@ exports.signupDoctor = (request, response) => {
 				createdAt: new Date().toISOString(),
 				cpf: newUser.cpf,
 				profession: newUser.profession,
-				userId: userId
+				hospital: newUser.hospital,
+				userId: userId,
+				associated_admin: request.body.associated_admin
 			};
 			//https://firebase.google.com/docs/firestore/manage-data/add-data
 			return db.doc(`/doctors/${newUser.login}`).set(userCredentials) ;
@@ -110,6 +113,7 @@ exports.doctorCredentials = (request, response) => {
       		if (doc.exists) {
         		userData.credentials = doc.data().login;
         		userData.profession = doc.data().profession;
+        		userData.hospital = doc.data().hospital;
         	}
         	return response.json(userData)
         })
