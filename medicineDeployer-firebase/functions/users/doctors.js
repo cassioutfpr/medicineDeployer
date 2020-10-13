@@ -119,92 +119,79 @@ exports.doctorCredentials = (request, response) => {
    		});
 }
 
+const order = require("../model/order");
+
 exports.updateOrders = (request, response) => {
-	let patientData = {};
-	let idDocument;
+	calculateNewOrders();
+	return response.json({ message: 'Updated'});
+}
+
+exports.calculateNewOrders = () => {
+	let ordersPerPatient = [];
+
 	db.collection('patients').orderBy('name').get()
-		.then(data => {
-			data.forEach(doc => {
-				patientData = doc.data();
-				idDocument = doc.id;
-				var newOrder;
-				var medicationForOrder = [];
-				var list_of_medications = [];
-				patientData.medication.forEach(medication => {
-					var dateNow = new Date();
-					var medication_dic = {};
-					medication_dic.name = medication.name;
-					medication_dic.id =medication.id;
-					medication_dic.selectedInitialDate = medication.selectedInitialDate;
-					medication_dic.selectedEndDate = medication.selectedEndDate;
-					medication_dic.checkpointDate =	medication.checkpointDate; 
-					medication_dic.periodicity = medication.periodicity;
-					medication_dic.quantity = medication.quantity;
-					medication_dic.unity = medication.unity;
+		.then(patients => {
+			patients.forEach(patient => {
+				var patientMedications = [];
 
-					medicationDate = new Date(medication.selectedInitialDate)
-					medicationEndDate = new Date(medication.selectedEndDate)
-
-					if(dateNow >= medicationDate)
-					{
-						var added_hours = parseInt(medication.periodicity.slice(0,2), 10);
-						var added_minutes = parseInt(medication.periodicity.slice(3,5), 10);
-
-						checkpointDate = new Date(medication.checkpointDate)
-
-						checkpointDate.setHours(checkpointDate.getHours() + added_hours)
-						checkpointDate.setMinutes(checkpointDate.getMinutes() + added_minutes)
-						
-
-						if(checkpointDate <= dateNow)
-						{
-							if(dateNow <= medicationEndDate)
-							{
-								medication_dic.checkpointDate = dateNow.toISOString(); 
-								medicationForOrder.push(medication_dic)
-							}
-						}
+				patient.data().medication.forEach(medication => {
+					if(!shouldAddMedicationToOrder(medication)) {
+						patientMedications.push(medication);
+						return;
 					}
-					list_of_medications.push(medication_dic)
-				})
-				patientData.medication = list_of_medications
-				db.collection('/patients').doc(idDocument).update(patientData)
-				.then(doc => {
-					console.log('atualizou')
-				})
-				.catch(err => {
-					//return response.status(500).json({error: 'something went wrong'}); //500 internal server error
-					console.error(err);
+
+					var patientId = patient.id;
+
+					if(!(patientId in ordersPerPatient)) {
+						ordersPerPatient[patientId] = order.initializeNewOrder(patientId, patient.data().aisle);
+					}
+
+					ordersPerPatient[patientId].addMedication(medication);
+					patientMedications.push(updateCheckpoint(medication));
 				})
 
-				if(medicationForOrder.length !== 0)
-				{
-					newOrder = { 
-						associated_doctor: patientData.associated_doctor,
-						gender:patientData.gender,
-						aisle: patientData.aisle,
-						bed: patientData.bed,
-						name: patientData.name,
-						diagnosis: patientData.diagnosis,
-						medication: medicationForOrder,
-						notifications: patientData.notifications,
-						state: "created",
-						createdAt: new Date().toISOString()
-					};
-
-					db.collection('orders').add(newOrder)
-					.then(doc => {
-					})
-					.catch(err => {
-						console.log(err)
-					})
-				}
+				updatePatientData(patient, patientMedications);
 			})
+
+			for(var index in ordersPerPatient) {
+				ordersPerPatient[index].saveOrder();
+			}
 		})
 		.catch(err => {
 			console.error(err);
+		});
+}
+
+function shouldAddMedicationToOrder(medication) {
+	var dateNow = new Date();
+	var medicationDate = new Date(medication.selectedInitialDate);
+	var medicationEndDate = new Date(medication.selectedEndDate);
+	var added_hours = parseInt(medication.periodicity.slice(0,2), 10);
+	var added_minutes = parseInt(medication.periodicity.slice(3,5), 10);
+	var checkpointDate = new Date(medication.checkpointDate);
+
+	checkpointDate.setHours(checkpointDate.getHours() + added_hours);
+	checkpointDate.setMinutes(checkpointDate.getMinutes() + added_minutes);
+
+	return dateNow >= medicationDate && dateNow <= medicationEndDate && checkpointDate <= dateNow;
+}
+
+function updateCheckpoint(medication) {
+	medication.checkpointDate = (new Date()).toISOString();
+	return medication;
+}
+
+function updatePatientData(patient, patientMedications) {
+	var patientData = patient.data();
+	patientData.medication = patientMedications;
+
+	db.collection('/patients').doc(patient.id).update(patientData)
+		.then(doc => {
+			console.log('atualizou patient')
 		})
-	return response.json({ message: 'Updated'})
+		.catch(err => {
+			console.error(err);
+		});
 }
 
 exports.getAllOrders = (request, response) => {

@@ -1,5 +1,4 @@
 const { db } = require('../util/admin')
-const { validateAddPatientData } = require('../util/validators')
 
 exports.getAllPatients = (request, response) => {
 	db.collection('patients').orderBy('name').get()
@@ -23,43 +22,27 @@ exports.getAllPatients = (request, response) => {
 		})
 }
 
+const patient = require("../model/patient");
+
 exports.addOnePatient = (request,response) => {
-	const newPatient = { 
-		associated_doctor: request.user.login,
-		associated_admin: request.body.associated_admin,
-		cpf: request.body.cpf,
-		gender: request.body.gender,
-		date_of_birth: request.body.date_of_birth,
-		aisle: request.body.aisle,
-		bed: request.body.bed,
-		email: request.body.email,
-		city: request.body.city,
-		state: request.body.state,
-		name: request.body.name,
-		score: request.body.score,
-		diagnosis: [],
-		medication: [],
-		notifications: [{
-			associated_doctor: request.user.login,
-			createdAt: new Date().toISOString(),
-			message: `${request.body.name} adicionado por ${request.user.login}`,
-			read: false
-		}],
-		createdAt: new Date().toISOString()
-	};
+	response = patient.insertPatient(
+		request.user.login,
+		request.body.associated_admin,
+		request.body.cpf,
+		request.body.gender,
+		request.body.date_of_birth,
+		request.body.aisle,
+		request.body.bed,
+		request.body.email,
+		request.body.city,
+		request.body.state,
+		request.body.name,
+		request.body.score,
+		[],
+		[]
+	);
 
-	const { valid, errors } = validateAddPatientData(newPatient); 
-
-	if(!valid) return response.status(400).json(errors)
-
-	db.collection('patients').add(newPatient)
-		.then(doc => {
-			response.json({ message: `${doc.id}`})
-		})
-		.catch(err => {
-			response.status(500).json({error: 'something went wrong'}); //500 internal server error
-			console.error(err);
-		})
+	return response.status(response);
 }
 
 // Delete a patient
