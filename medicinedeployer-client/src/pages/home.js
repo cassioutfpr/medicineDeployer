@@ -109,7 +109,7 @@ class home extends React.Component{
 					</Grid>
 			 	</div>
 			);
-		else if(this.state.itemSelectedList === 'add_patient')
+		else if(this.state.itemSelectedList === 'add_patient' && localStorage.profession === 'doctor')
 			return(
 			  	<div>
 			    	<Navbar />
