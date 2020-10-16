@@ -62,6 +62,10 @@ exports.validateSignUpData = (data) => {
 				errors.crm = 'Não pode ser vazio';
 		}
 	}
+	if(isEmpty(data.hospital)){
+		errors.hospital = 'Não pode ser vazio';
+	}
+
 
 	//Object is a javascript class
 	return {
@@ -118,6 +122,26 @@ exports.validateAddPatientData = (data) => {
 	}
 	if(isEmpty(data.city)){
 		errors.city = 'Não pode ser vazio';
+	}
+
+	return {
+		errors,
+		valid: Object.keys(errors).length === 0 ? true : false
+	}
+}
+
+exports.validateAddMedicationData = (data) => {
+	let errors = {};
+	console.log('oxe')
+
+	if(isEmpty(data.name)){
+		errors.name = 'Não pode ser vazio';
+	}
+	if(isEmpty(data.quantity)){
+		errors.quantity = 'Não pode ser vazio';
+	}		
+	if(isEmpty(data.unity)){
+		errors.unity = 'Não pode ser vazio';
 	}
 
 	return {

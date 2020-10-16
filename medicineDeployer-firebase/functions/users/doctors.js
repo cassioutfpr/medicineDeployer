@@ -19,6 +19,7 @@ exports.signupDoctor = (request, response) => {
 		crm: request.body.crm,
 		cpf: request.body.cpf,
 		profession: request.body.profession,
+		hospital: request.body.hospital,
 	};
 
 	const { valid, errors } = validateSignUpData(newUser); 
@@ -50,7 +51,9 @@ exports.signupDoctor = (request, response) => {
 				createdAt: new Date().toISOString(),
 				cpf: newUser.cpf,
 				profession: newUser.profession,
-				userId: userId
+				hospital: newUser.hospital,
+				userId: userId,
+				associated_admin: request.body.associated_admin
 			};
 			//https://firebase.google.com/docs/firestore/manage-data/add-data
 			return db.doc(`/doctors/${newUser.login}`).set(userCredentials) ;
@@ -110,6 +113,7 @@ exports.doctorCredentials = (request, response) => {
       		if (doc.exists) {
         		userData.credentials = doc.data().login;
         		userData.profession = doc.data().profession;
+        		userData.hospital = doc.data().hospital;
         	}
         	return response.json(userData)
         })
@@ -234,14 +238,23 @@ exports.orderSentFromPharmaceutical = (request, response) => {
 			}
 			orderData = doc.data();
 			orderData.state = 'sent_from_pharmaceutical'
-			db.collection('/orders').doc(orderId).update(orderData)
-				.then(data => {
-					return response.json({message: 'Pedido atualizado com sucesso'});
-				})
-				.catch(err => {
-					console.error(err)
-					response.status(500).json({error: err.code});
-				})
+			let quantity_sub;
+			let quantity_add;
+            request.body.medication[0].forEach((medication) => (
+				db.collection('medication').where('name', '==', medication.name).limit(1).get()
+					.then(data =>{
+						quantity_sub = parseInt(data.docs[0].data().quantity_left, 10) - parseInt(medication.quantity, 10)
+						quantity_add = parseInt(data.docs[0].data().quantity_used, 10) + parseInt(medication.quantity, 10)
+						db.collection("medication").doc(data.docs[0].id).update({quantity_left: quantity_sub, quantity_used: quantity_add})
+					})
+					.catch(err => {
+						return response.status(500).json({error: err.code});
+					})
+			)) 
+			return db.collection('/orders').doc(orderId).update(orderData)
+		})
+		.then(data => {
+			return response.json({message: 'Pedido atualizado com sucesso'});
 		})
 		.catch(err => {
 			console.error(err)

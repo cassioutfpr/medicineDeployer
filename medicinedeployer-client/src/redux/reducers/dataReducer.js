@@ -1,8 +1,9 @@
-import { SET_PATIENTS, SET_ORDERS } from '../types';
+import { SET_PATIENTS, SET_ORDERS, SET_MEDICATION } from '../types';
 
 const initialState = {
 	patients: [],
-	orders: []
+	orders: [],
+	medication: [],
 }
 
 export default function(state = initialState, action){
@@ -15,6 +16,10 @@ export default function(state = initialState, action){
 			return{
 				orders: action.payload,
 			}    
+		case SET_MEDICATION:
+			return{
+				medication: action.payload,
+			}
 		default:
 			return state; 
 	}

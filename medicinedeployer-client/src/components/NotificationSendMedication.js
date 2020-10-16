@@ -13,6 +13,7 @@ import axios from 'axios'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
+import InfoIcon from '@material-ui/icons/Info';
 
 const styles  = {
   root: {
@@ -80,6 +81,7 @@ class NotificationSendMedication extends React.Component{
 
   sendOrder = () => {
     let id = this.props.ordersSelected.map(orderSelected => (orderSelected.orderId))
+    let medication = this.props.ordersSelected.map(orderSelected => (orderSelected.medication))
     var date_now = new Date()
     date_now = date_now.toISOString()
     this.setState({
@@ -87,8 +89,12 @@ class NotificationSendMedication extends React.Component{
     })
     const dataToSend = {
       id: id,
-      dateSentFromPharmaceutical: date_now
+      dateSentFromPharmaceutical: date_now,
+      medication: medication,
     };
+
+    console.log('data')
+    console.log(dataToSend)
 
     axios.post(`/doctors/orderSentFromPharmaceutical/${id}`, dataToSend, {headers: {Authorization: localStorage.FBIdToken}})
       .then(res => {
@@ -109,9 +115,15 @@ class NotificationSendMedication extends React.Component{
   render(){
     return (
       <div>
+        {localStorage.profession  === "pharmaceutical" ? 
         <Button disabled={this.isEmpty(this.props.ordersSelected)} style={this.isEmpty(this.props.ordersSelected)? {backgroundColor: '#757575'}: {backgroundColor: '#00d1be'}} onClick={this.handleClickOpen}>
           <SendIcon style={{fill: "white"}}/>
+        </Button> 
+        :
+        <Button disabled={this.isEmpty(this.props.ordersSelected)} style={this.isEmpty(this.props.ordersSelected)? {backgroundColor: '#757575'}: {backgroundColor: '#00d1be'}} onClick={this.handleClickOpen}>
+          <InfoIcon style={{fill: "white"}}/>
         </Button>
+        } 
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
@@ -123,7 +135,7 @@ class NotificationSendMedication extends React.Component{
           <DialogTitle style={styles.title} id="notification-dialog-title">
             {this.props.ordersSelected.map((orderSelected, index) => (
                 <div key={orderSelected.name}>
-                  Adicionar medicamento para {orderSelected.name}
+                  {localStorage.profession  === "pharmaceutical" ? `Adicionar medicamento para ${orderSelected.name}` : `Log do pedido ${orderSelected.orderId}`}
                 </div>
             ))}
           </DialogTitle>
@@ -141,6 +153,12 @@ class NotificationSendMedication extends React.Component{
                 ))}
                 <br/>
                 <b>Médico:</b> {orderSelected.associated_doctor}
+                <br/>
+                <b>Ala:</b> {orderSelected.aisle}
+                <br/>
+                {localStorage.profession  === "pharmaceutical" ? <div></div> :
+                  <b>Entregue em:</b>
+                }
                 <br/>
                 <br/>
                 <b>Medicamentos:</b>
@@ -162,12 +180,16 @@ class NotificationSendMedication extends React.Component{
           </DialogContent>
 
           <DialogActions>
+          {localStorage.profession  === "pharmaceutical" ? 
             <Button  disabled={this.state.loading} onClick={this.sendOrder.bind(this)} variant="contained" style={{ backgroundColor:'#00d1be', color:'white'}}>
               Enviar
               {this.state.loading && (
               <CircularProgress size={30} style={{position: 'absolute', color: '#0096cd'}}/>
               )}
             </Button>
+            :
+            <div></div>
+          }
           </DialogActions>
         </Dialog>
       </div>

@@ -113,7 +113,7 @@ class login extends React.Component{
 		  			</Button>
 		  			<br />
 		  			<br />
-		  			<small className={classes.smallText}>Não tem cadastro? <Link to='/signup' className={classes.linkText}>Clique aqui.</Link></small>
+		  			<small className={classes.smallText}>É administrador? <Link to='/signup' className={classes.linkText}>Cadastro.</Link></small>
 		  		</form>
 		  	</Grid>
 		  	<Grid item sm/>

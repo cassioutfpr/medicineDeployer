@@ -65,6 +65,7 @@ class signup extends React.Component{
 			login: "",
 			cpf: "",
 			profession: "doctor",
+			hospital: "",
 			errors: {}
 		}
 	}
@@ -89,7 +90,8 @@ class signup extends React.Component{
 			login: this.state.login,
 			crm: this.state.crm,
 			cpf: this.state.cpf,
-			profession: this.state.profession,
+			profession: "admin",
+			hospital: this.state.hospital,
 		}
 		this.props.signupUser(newUserData, this.props.history)
 	}
@@ -124,23 +126,13 @@ class signup extends React.Component{
 		  			className={classes.textField} value={this.state.confirmPassword} onChange={this.handleChange} 
 		  			helperText = {errors.confirmPassword} error = {errors.confirmPassword ? true : false} variant="outlined" fullWidth/>
 
-
 		  			<TextField id="cpf" name="cpf" type="text" label="CPF" 
 		  			className={classes.textField} value={this.state.cpf} onChange={this.handleChange} 
 		  			helperText = {errors.cpf} error = {errors.cpf ? true : false} variant="outlined" fullWidth/>
 
-			  		<FormControl component="fieldset" className={classes.professionForm} onChange={this.handleChange} fullWidth>
-      					<FormLabel component="legend">Profissão</FormLabel>
-              			<RadioGroup row aria-label="profession" name="profession" defaultValue="doctor">
-               				<FormControlLabel value="doctor" control={<Radio color="primary" />} label="Médico" />
-                			<FormControlLabel value="pharmaceutical" control={<Radio color="primary" />} label="Farmacêutico" />
-              			</RadioGroup>
-            		</FormControl>
-
-		  			{this.state.profession === 'doctor' && <TextField id="crm" name="crm" type="text" label="CRM" 
-		  			className={classes.textField} value={this.state.crm} onChange={this.handleChange} 
-		  			helperText = {errors.crm} error = {errors.crm ? true : false} variant="outlined" fullWidth/>}
-
+					<TextField id="hospital" name="hospital" type="text" label="Hospital" 
+		  			className={classes.textField} value={this.state.hospital} onChange={this.handleChange} 
+		  			helperText = {errors.hospital} error = {errors.hospital ? true : false} variant="outlined" fullWidth/>
 
 		  			{errors.general && (
 		  				<Typography variant = "body2" className={classes.customError}>
