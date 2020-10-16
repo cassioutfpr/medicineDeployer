@@ -234,26 +234,6 @@ exports.addMedicationToPatient = (request, response) => {
 		})
 }
 
-exports.getAllMedication = (request, response) => {
-	db.collection('medication').orderBy('id').get()
-		.then(data => {
-			//data is a querySnapshot witch has docs in it
-			let medication = []; 
-			data.forEach(doc => {
-				//iterating through array of docs
-				medication.push({
-					id: doc.data().id,
-					name: doc.data().name,
-					associated_diagnosis: doc.data().associated_diagnosis
-				});
-			});
-			return response.json(medication);
-		})
-		.catch(err => {
-			console.error(err);
-		})
-}
-
 exports.getMedicationSearch = (request, response) => {
  	db.collection('medication').where('searchKey', '==' , request.body.searchKey.substring(0, 1).toUpperCase()).get() 
     	.then((data) => {

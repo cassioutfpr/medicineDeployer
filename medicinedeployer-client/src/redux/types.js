@@ -10,3 +10,4 @@ export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 //Data reducer typess
 export const SET_PATIENTS = 'SET_PATIENTS';
 export const SET_ORDERS = 'SET_ORDERS';
+export const SET_MEDICATION = 'SET_MEDICATION';

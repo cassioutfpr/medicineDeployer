@@ -81,6 +81,7 @@ class NotificationSendMedication extends React.Component{
 
   sendOrder = () => {
     let id = this.props.ordersSelected.map(orderSelected => (orderSelected.orderId))
+    let medication = this.props.ordersSelected.map(orderSelected => (orderSelected.medication))
     var date_now = new Date()
     date_now = date_now.toISOString()
     this.setState({
@@ -88,7 +89,8 @@ class NotificationSendMedication extends React.Component{
     })
     const dataToSend = {
       id: id,
-      dateSentFromPharmaceutical: date_now
+      dateSentFromPharmaceutical: date_now,
+      medication: medication,
     };
 
     axios.post(`/doctors/orderSentFromPharmaceutical/${id}`, dataToSend, {headers: {Authorization: localStorage.FBIdToken}})

@@ -8,6 +8,7 @@ import Divider from '@material-ui/core/Divider';
 import ListIcon from '@material-ui/icons/List';
 import AddPatient from './AddPatient'
 import AddStaff from './AddStaff'
+import AddMedicationToDataBase from './AddMedicationToDataBase'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,6 +50,7 @@ export default function SelectedListItem(props) {
       <div className={classes.root}>
         <List component="nav">        
           <AddStaff handleListItemClick={handleListItemClick} selectedIndex={selectedIndex}/>
+          <AddMedicationToDataBase handleListItemClick={handleListItemClick} selectedIndex={selectedIndex}/>
         </List>
       </div>
     );

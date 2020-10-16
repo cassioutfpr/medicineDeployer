@@ -7,14 +7,14 @@ const app = express();
 const cors = require('cors')({origin: true});
 
 const { getAllPatients, addOnePatient, deletePatient, getPatient, 
-		addDiagnosisToPatient, addMedicationToPatient, getAllDiagnosis,
-		getAllMedication, getDiagnosisSearch, 
+		addDiagnosisToPatient, addMedicationToPatient, 
+		getAllDiagnosis,getDiagnosisSearch, 
 		getMedicationSearch, sendNotification } = require('./users/patients')
 const { signupDoctor, loginDoctor, doctorCredentials, updateOrders, getAllOrders, orderSentFromPharmaceutical } = require('./users/doctors')
 
 const { getSentOrders, deliveringOrder, orderDelivered } = require('./users/robot')
 
-const { getDeliveredOrders } = require('./users/admin')
+const { getDeliveredOrders, addOneMedication, getAllMedication, updateMedicationQuantity } = require('./users/admin')
 
 const FBAuth = require('./util/fbAuth');
 
@@ -22,7 +22,6 @@ const FBAuth = require('./util/fbAuth');
 app.get('/patients', getAllPatients);
 app.get('/patients/:patientId', getPatient);
 app.get('/allDiagnosis', getAllDiagnosis);
-app.get('/allMedication', getAllMedication);
 app.post('/getDiagnosisSearch', getDiagnosisSearch);
 app.post('/getMedicationSearch', getMedicationSearch);
 
@@ -47,14 +46,16 @@ app.post('/loginDoctor', loginDoctor);
 //UpdateOrders
 app.get('/updateOrders', updateOrders);
 app.get('/getOrders', getAllOrders);
-app.post('/doctors/orderSentFromPharmaceutical/:id', FBAuth, orderSentFromPharmaceutical)
+app.post('/doctors/orderSentFromPharmaceutical/:id', orderSentFromPharmaceutical)
 
 //getOrdersFromPharmaceutical
 app.get('/robot/getSentOrders', getSentOrders)
 app.post('/robot/deliveringOrder/:id', deliveringOrder)
 app.post('/robot/orderDelivered/:id', orderDelivered)
 
-
+app.post('/addOneMedication', addOneMedication)
+app.get('/admin/getMedication', getAllMedication);
+app.post('/admin/updateMedicationQuantity/:id', updateMedicationQuantity)
 app.get('/admin/getDeliveredOrders', getDeliveredOrders)
 
 app.use(cors);

@@ -251,14 +251,25 @@ exports.orderSentFromPharmaceutical = (request, response) => {
 			}
 			orderData = doc.data();
 			orderData.state = 'sent_from_pharmaceutical'
-			db.collection('/orders').doc(orderId).update(orderData)
-				.then(data => {
-					return response.json({message: 'Pedido atualizado com sucesso'});
-				})
-				.catch(err => {
-					console.error(err)
-					response.status(500).json({error: err.code});
-				})
+			let medication_document;
+			let documento;
+			let quantity_sub;
+			let med_name;
+            request.body.medication.forEach((medication) => (
+				db.collection('medication').where('name', '==', medication.name).limit(1).get()
+					.then(data =>{
+						console.log(data.docs[0].id)
+						quantity_sub = parseInt(data.docs[0].data().quantity_left, 10) - parseInt(medication.quantity, 10)
+						db.collection("medication").doc(data.docs[0].id).update({quantity_left: quantity_sub})
+					})
+					.catch(err => {
+						return response.status(500).json({error: err.code});
+					})
+			)) 
+			return db.collection('/orders').doc(orderId).update(orderData)
+		})
+		.then(data => {
+			return response.json({message: 'Pedido atualizado com sucesso'});
 		})
 		.catch(err => {
 			console.error(err)

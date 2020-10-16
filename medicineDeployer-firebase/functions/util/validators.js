@@ -129,3 +129,23 @@ exports.validateAddPatientData = (data) => {
 		valid: Object.keys(errors).length === 0 ? true : false
 	}
 }
+
+exports.validateAddMedicationData = (data) => {
+	let errors = {};
+	console.log('oxe')
+
+	if(isEmpty(data.name)){
+		errors.name = 'Não pode ser vazio';
+	}
+	if(isEmpty(data.quantity)){
+		errors.quantity = 'Não pode ser vazio';
+	}		
+	if(isEmpty(data.unity)){
+		errors.unity = 'Não pode ser vazio';
+	}
+
+	return {
+		errors,
+		valid: Object.keys(errors).length === 0 ? true : false
+	}
+}
