@@ -93,6 +93,9 @@ class NotificationSendMedication extends React.Component{
       medication: medication,
     };
 
+    console.log('data')
+    console.log(dataToSend)
+
     axios.post(`/doctors/orderSentFromPharmaceutical/${id}`, dataToSend, {headers: {Authorization: localStorage.FBIdToken}})
       .then(res => {
         this.setState({
