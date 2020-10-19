@@ -50,7 +50,7 @@ const headCells = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Nome' },
   { id: 'age', numeric: true, disablePadding: false, label: 'Idade' },
   { id: 'aisle', numeric: true, disablePadding: false, label: 'Ala' },
-  { id: 'bed', numeric: true, disablePadding: false, label: 'Cama' },
+  { id: 'gender', numeric: true, disablePadding: false, label: 'Gênero' },
 ];
 
 const patientsSelected = [];
@@ -175,7 +175,7 @@ const EnhancedTableToolbar = (props) => {
           {props.title}
         </Typography>
       )}
-      <NotificationDialog patientsSelected={patientsSelected}/>
+      <NotificationDialog patientsSelected={patientsSelected} clearSelectedMedication={props.clearSelectedMedication}/>
       <Button className={classes.deleteButton} disabled={isEmpty(patientsSelected)} style={isEmpty(patientsSelected)? {backgroundColor: '#757575'}: {backgroundColor: 'red'}} onClick={handleClickOpen}>
           <DeleteForeverIcon style={{fill: "white"}}/>
       </Button>
@@ -292,6 +292,11 @@ export default function EnhancedTable(props) {
     setSelected([]);
   }
 
+  const clearSelectedMedication = (patientName) => {
+    patientsSelected.splice(0, 1)
+    setSelected([]);
+  }
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
   };
@@ -343,7 +348,7 @@ export default function EnhancedTable(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} title={props.title} getPatients={props.getPatients} removeDeletedPatient={removeDeletedPatient}/>
+        <EnhancedTableToolbar numSelected={selected.length} title={props.title} getPatients={props.getPatients} removeDeletedPatient={removeDeletedPatient}  clearSelectedMedication={clearSelectedMedication}/>
         <TableContainer>
           <Table
             className={classes.table}
@@ -390,7 +395,7 @@ export default function EnhancedTable(props) {
                       </TableCell>
                       <TableCell align="right">{calculateAge(row.date_of_birth)}</TableCell>
                       <TableCell align="right">{row.aisle}</TableCell>
-                      <TableCell align="right">{row.bed}</TableCell>
+                      <TableCell align="right">{row.gender}</TableCell>
                     </TableRow>
                   );
                 })}

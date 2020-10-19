@@ -237,21 +237,6 @@ export default function AddMedicationBody(props) {
               className={classes.textField} onChange={props.handleChange}
               helperText = {props.errors.quantity} error = {props.errors.quantity ? true : false} variant="outlined"/>
 
-            <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel id="unidade">Un.</InputLabel>
-              <Select
-                labelId="unidade"
-                id="unidade"
-                onChange={props.handleChange}
-                label="Un."
-                name="unity"
-                value={props.unity}
-              >
-                <MenuItem value={'COMP'}>comp.</MenuItem>
-                <MenuItem value={'GOTAS'}>gotas</MenuItem>
-                <MenuItem value={'Ml'}>ml</MenuItem>
-              </Select>
-            </FormControl>
             <Divider className={classes.divider}/>
           </div>
         ))}

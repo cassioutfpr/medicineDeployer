@@ -91,6 +91,7 @@ class NotificationDialog extends React.Component{
      this.setState({
       open: false,
     })
+     this.props.clearSelectedMedication();
   };
 
  sendMessage = () => {

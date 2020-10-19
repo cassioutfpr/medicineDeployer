@@ -51,7 +51,7 @@ const headCells = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Nome' },
   { id: 'orderId', numeric: true, disablePadding: false, label: 'ID Pedido' },
   { id: 'aisle', numeric: true, disablePadding: false, label: 'Ala' },
-  { id: 'bed', numeric: true, disablePadding: false, label: 'Cama' },
+  { id: 'doctor', numeric: true, disablePadding: false, label: 'Médico' },
 ];
 
 const ordersSelected = [];
@@ -361,7 +361,7 @@ export default function EnhancedTableOrders(props) {
                       </TableCell>
                       <TableCell align="right">{row.orderId}</TableCell>
                       <TableCell align="right">{row.aisle}</TableCell>
-                      <TableCell align="right">{row.bed}</TableCell>
+                      <TableCell align="right">{row.associated_doctor}</TableCell>
                     </TableRow>
                   );
                 })}

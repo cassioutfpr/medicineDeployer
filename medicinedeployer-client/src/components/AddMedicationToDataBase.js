@@ -22,7 +22,7 @@ class AddMedicationToDataBase extends React.Component{
       loading: false,
       name: false,
       quantity:"",
-      unity:"",
+      unity:"COMP",
       errors: {}
     }
 
@@ -57,7 +57,7 @@ class AddMedicationToDataBase extends React.Component{
       loading: false,
       name: false,
       quantity:"",
-      unity:"",
+      unity:"COMP",
       errors: {}
     })
   };

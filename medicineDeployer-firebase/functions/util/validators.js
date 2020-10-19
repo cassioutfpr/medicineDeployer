@@ -117,9 +117,6 @@ exports.validateAddPatientData = (data) => {
 	if(isEmpty(data.aisle)){
 		errors.aisle = 'Não pode ser vazio';
 	}
-	if(isEmpty(data.bed)){
-		errors.bed = 'Não pode ser vazio';
-	}
 	if(isEmpty(data.city)){
 		errors.city = 'Não pode ser vazio';
 	}
@@ -136,12 +133,6 @@ exports.validateAddMedicationData = (data) => {
 
 	if(isEmpty(data.name)){
 		errors.name = 'Não pode ser vazio';
-	}
-	if(isEmpty(data.quantity)){
-		errors.quantity = 'Não pode ser vazio';
-	}		
-	if(isEmpty(data.unity)){
-		errors.unity = 'Não pode ser vazio';
 	}
 
 	return {

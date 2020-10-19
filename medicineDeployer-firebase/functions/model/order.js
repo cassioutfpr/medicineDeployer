@@ -1,27 +1,40 @@
 const { admin, db } = require('../util/admin');
 
-exports.initializeNewOrder = (patientId, aisle) => {
+exports.initializeNewOrder = (name, aisle, hospital, notifications, diagnosis, associated_doctor) => {
     return {
-        patientId: patientId,
+        name: name,
         aisle: aisle,
-        medications: [],
+        medication: [],
+        notifications: notifications,
+        diagnosis: diagnosis,
         state: "created",
         createdAt: new Date().toISOString(),
+        hospital: hospital,
         addMedication,
         saveOrder,
+        nurse: "",
+        deliveredAt: "",
+        associated_doctor: associated_doctor
     };
 }
 
 function addMedication(medication) {
-    this.medications.push(medication);
+    this.medication.push(medication);
 }
 
 function saveOrder() {
     var newOrder = {
-        patientId: this.patientId,
-        medications: this.medications,
+        name: this.name,
+        medication: this.medication,
         state: this.state,
         createdAt: this.createdAt,
+        aisle: this.aisle,
+        hospital: this.hospital,
+        notifications: this.notifications,
+        diagnosis: this.diagnosis,
+        associated_doctor: this.associated_doctor,
+        nurse: "",
+        deliveredAt: "",
     };
 
     db.collection('orders').add(newOrder)
@@ -29,6 +42,7 @@ function saveOrder() {
             console.log('added order');
         })
         .catch(err => {
+            console.log('salvou orderopaoaopaoapopa')
             console.log(err)
         });
 }

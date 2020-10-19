@@ -4,8 +4,7 @@ const initialState = {
 	authenticated: false,
 	credentials: "",
 	profession: "",
-	hospital: "",
-	FBIdToken: ""
+	hospital: ""
 }
 
 export default function(state = initialState, action){

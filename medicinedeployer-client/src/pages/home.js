@@ -19,7 +19,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 //Redux stuff
 import { connect } from 'react-redux';
-import { getPatients, getOrders, getDeliveredOrders, getMedication } from '../redux/actions/dataActions';
+import { getPatients, getOrders, getDeliveredOrders, getMedication, updateOrders } from '../redux/actions/dataActions';
 
 const styles = {
 	generalInfo:{
@@ -67,14 +67,17 @@ class home extends React.Component{
   		if(localStorage.profession === 'doctor')
   		{
   			clearInterval(this.interval);
+  			clearInterval(this.interval2);
   			this.props.getPatients();
   			//this.state.opabeleza = null;
   		}
   		else if(localStorage.profession === 'pharmaceutical')
   		{
   			//this.interval = null;
+  			this.props.updateOrders()
   			this.props.getOrders();
   			this.interval = setInterval(()=> this.props.getOrders(), 60000);
+  			this.interval2 = setInterval(()=> this.props.updateOrders(), 60000);
   		}
   		else if(localStorage.profession === 'admin')
   		{
@@ -88,6 +91,7 @@ class home extends React.Component{
 
 	componentWillUnmount() {
 		clearInterval(this.interval);
+		clearInterval(this.interval2);
 	}
 
 
@@ -123,7 +127,10 @@ class home extends React.Component{
 					<Grid container className={classes.patientsGrid}>
 						<Grid className={classes.tables} item xs={2}/>
                     	<Grid className={classes.tables} item xs={10}>
-                        	{loading && this.isEmpty(this.props.data.patients) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTable patients={this.props.data.patients} title="Lista Completa de Pacientes" getPatients={this.props.getPatients}/>}
+                        	{loading && this.isEmpty(this.props.data.patients) ? 
+                        		<CircularProgress size={30} className={classes.progress}/> 
+                        		: 
+                        		<EnhancedTable patients={this.props.data.patients} title="Lista Completa de Pacientes" getPatients={this.props.getPatients}/>}
                     	</Grid>
 					</Grid>
 			 	</div>
@@ -141,7 +148,10 @@ class home extends React.Component{
 					<Grid container className={classes.patientsGrid}>
 						<Grid className={classes.tables} item xs={2}/>
                     	<Grid className={classes.tables} item xs={10}>
-                        	{loading && this.isEmpty(this.props.data.patients) ? <CircularProgress size={30} className={classes.progress}/> : <EnhancedTable patients={this.props.data.patients} title="Lista Completa de Pacientes" getPatients={this.props.getPatients}/>}
+                        	{loading && this.isEmpty(this.props.data.patients) ? 
+                        		<CircularProgress size={30} className={classes.progress}/> 
+                        		: 
+                        		<EnhancedTable patients={this.props.data.patients} title="Lista Completa de Pacientes" getPatients={this.props.getPatients}/>}
                     	</Grid>
 					</Grid>
 			 	</div>
@@ -210,6 +220,7 @@ home.propTypes = {
 	classes: PropTypes.object.isRequired,
 	getPatients: PropTypes.func.isRequired,
 	getOrders: PropTypes.func.isRequired,
+	updateOrders: PropTypes.func.isRequired,
 	getDeliveredOrders: PropTypes.func.isRequired,
 	getMedication: PropTypes.func.isRequired,
 	data: PropTypes.object.isRequired,
@@ -225,7 +236,8 @@ const mapActionsToProps = {
 	getPatients,
 	getOrders,
 	getDeliveredOrders,
-	getMedication
+	getMedication,
+	updateOrders
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(home))

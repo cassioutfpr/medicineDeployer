@@ -1,19 +1,24 @@
 const { db } = require('../util/admin')
+const { validateAddPatientData } = require('../util/validators')
 
 exports.getAllPatients = (request, response) => {
+	var hospital = request.params.hospital;
 	db.collection('patients').orderBy('name').get()
 		.then(data => {
 			//data is a querySnapshot witch has docs in it
 			let patients = []; 
 			data.forEach(doc => {
 				//iterating through array of docs
-				patients.push({
-					patientId: doc.id, //reference that the doc has. It is not in doc.data()
-					aisle: doc.data().aisle, //reference that the doc has. It is not in doc.data()
-					name: doc.data().name,
-					bed: doc.data().bed,
-					date_of_birth: doc.data().date_of_birth,
-				});
+				if(doc.data().hospital === hospital)
+				{
+					patients.push({
+						patientId: doc.id, //reference that the doc has. It is not in doc.data()
+						aisle: doc.data().aisle, //reference that the doc has. It is not in doc.data()
+						name: doc.data().name,
+						gender: doc.data().gender,
+						date_of_birth: doc.data().date_of_birth,
+					});
+				}
 			});
 			return response.json(patients);
 		})
@@ -22,27 +27,47 @@ exports.getAllPatients = (request, response) => {
 		})
 }
 
-const patient = require("../model/patient");
+//const patient = require("../model/patient");
 
 exports.addOnePatient = (request,response) => {
-	response = patient.insertPatient(
-		request.user.login,
-		request.body.associated_admin,
-		request.body.cpf,
-		request.body.gender,
-		request.body.date_of_birth,
-		request.body.aisle,
-		request.body.bed,
-		request.body.email,
-		request.body.city,
-		request.body.state,
-		request.body.name,
-		request.body.score,
-		[],
-		[]
-	);
+	const newPatient = { 
+		associated_doctor: request.user.login,
+		associated_admin: request.body.associated_admin,
+		cpf: request.body.cpf,
+		gender: request.body.gender,
+		date_of_birth: request.body.date_of_birth,
+		aisle: request.body.aisle,
+		email: request.body.email,
+		city: request.body.city,
+		state: request.body.state,
+		name: request.body.name,
+		score: request.body.score,
+		hospital: request.body.hospital,
+		diagnosis: [],
+		medication: [],
+		notifications: [{
+			associated_doctor: request.user.login,
+			createdAt: new Date().toISOString(),
+			message: `${request.body.name} adicionado por ${request.user.login}`,
+			read: false
+		}],
+		createdAt: new Date().toISOString()
+	};
 
-	return response.status(response);
+	const { valid, errors } = validateAddPatientData(newPatient); 
+
+	if(!valid) return response.status(400).json(errors)
+
+	db.collection('patients').add(newPatient)
+		.then(doc => {
+			response.json({ message: `${doc.id}`})
+		})
+		.catch(err => {
+			response.status(500).json({error: 'something went wrong'}); //500 internal server error
+			console.error(err);
+		})
+
+	//return response.json({ message: 'OPALELEBELEZA'})
 }
 
 // Delete a patient
@@ -172,6 +197,23 @@ exports.addMedicationToPatient = (request, response) => {
 	let idDocument;
 	var promises = [];
 
+	console.log(request.body.medication[0].peridiocity)
+
+	/*db.doc(`/patients/${request.params.patientId}`).get()
+		.then(doc => {
+			if(!doc.exists){
+				return response.status(404).json({error: 'Paciente não encontrado'});
+			}
+
+			return response.status(200).json({error: 'Paciente encontrado'});
+		})
+		.catch(err => {
+			console.error(err)
+			return response.status(500).json({error: err.code});
+		})
+
+	*/
+
 	db.doc(`/patients/${request.params.patientId}`).get()
 		.then(doc => {
 			if(!doc.exists){
@@ -181,12 +223,12 @@ exports.addMedicationToPatient = (request, response) => {
 			idDocument = doc.id;
 			var date_now = new Date()
 			date_now.setHours(date_now.getHours() - 24)
+			console.log(idDocument)
 			request.body.medication.forEach(medication => {
 				db.collection('medication').where('name', '==', medication.name).limit(1).get()
 				.then(data =>{
 					let medication_dic = {};
 					medication_dic.name = data.docs[0].data().name;
-					medication_dic.id = data.docs[0].data().id;
 					medication_dic.selectedInitialDate = medication.selectedInitialDate;
 					medication_dic.selectedEndDate = medication.selectedEndDate;
 					medication_dic.checkpointDate =	date_now.toISOString();
@@ -194,7 +236,13 @@ exports.addMedicationToPatient = (request, response) => {
 					medication_dic.quantity = medication.quantity;
 					medication_dic.unity = medication.unity;
 					patientData.medication.push(medication_dic)
-					promises.push(db.collection('/patients').doc(idDocument).update(patientData))
+					
+					console.log(patientData.medication)
+					const docRef = db.collection('patients').doc(idDocument);
+
+					docRef.update({medication: patientData.medication})
+
+					//promises.push(db.collection('/patients').doc(idDocument).update(patientData))
 				})
 				.catch(err => {
 					console.error(err)
@@ -218,13 +266,17 @@ exports.addMedicationToPatient = (request, response) => {
 }
 
 exports.getMedicationSearch = (request, response) => {
+	var hospital = request.params.hospital;
  	db.collection('medication').where('searchKey', '==' , request.body.searchKey.substring(0, 1).toUpperCase()).get() 
     	.then((data) => {
       		let allSearchedMedication = [];
       		data.forEach(doc =>{
-      			allSearchedMedication.push({
-      				name: doc.data().name
-      			})
+      			if(doc.data().hospital === hospital)
+      			{
+      				allSearchedMedication.push({
+      					name: doc.data().name
+	      			})
+      			}
       		})
       		return response.json(allSearchedMedication)
     	})

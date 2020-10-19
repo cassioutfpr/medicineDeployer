@@ -77,6 +77,7 @@ class NotificationSendMedication extends React.Component{
      this.setState({
       open: false,
     })
+    this.props.clearSelectedOrders()
   };
 
   sendOrder = () => {
@@ -102,7 +103,6 @@ class NotificationSendMedication extends React.Component{
           loading: false,
         })
         this.props.getOrders();
-        this.props.clearSelectedOrders()
         this.handleClose();
       })
       .catch(err =>{
@@ -157,13 +157,17 @@ class NotificationSendMedication extends React.Component{
                 <b>Ala:</b> {orderSelected.aisle}
                 <br/>
                 {localStorage.profession  === "pharmaceutical" ? <div></div> :
-                  <b>Entregue em:</b>
+                  <p><b>Entregue em:</b> {orderSelected.deliveredAt} </p>
+                }
+                <br/>
+                {localStorage.profession  === "pharmaceutical" ? <div></div> :
+                  <p><b>Entregue Por:</b> {orderSelected.nurse}</p>
                 }
                 <br/>
                 <br/>
                 <b>Medicamentos:</b>
                 {orderSelected.medication.map((medication, index) => (
-                  <div key={medication.id}>
+                  <div key={medication.name}>
                     <p>{medication.name} - {medication.quantity} {medication.unity}</p> <br/>
                   </div>
                  ))}

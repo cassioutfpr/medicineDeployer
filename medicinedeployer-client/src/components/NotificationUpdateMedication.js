@@ -79,6 +79,7 @@ class NotificationUpdateMedication extends React.Component{
      this.setState({
       open: false,
     })
+    this.props.clearSelectedMedication();
   };
 
   handleChange = (event) =>{
@@ -104,7 +105,6 @@ class NotificationUpdateMedication extends React.Component{
           loading: false,
         })
         this.props.getMedication();
-        this.props.clearSelectedMedication();
         this.handleClose();
       })
       .catch(err =>{

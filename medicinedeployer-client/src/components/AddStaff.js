@@ -85,7 +85,7 @@ class AddStaff extends React.Component{
       login: this.state.login,
       cpf: this.state.cpf,
       profession: this.state.profession,
-      hospital: this.state.hospital,
+      hospital: localStorage.hospital,
       associated_admin: localStorage.credentials,
     };
 

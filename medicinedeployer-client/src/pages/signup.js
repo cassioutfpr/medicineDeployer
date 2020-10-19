@@ -92,7 +92,9 @@ class signup extends React.Component{
 			cpf: this.state.cpf,
 			profession: "admin",
 			hospital: this.state.hospital,
+			associated_admin: this.state.login,
 		}
+		console.log(newUserData)	
 		this.props.signupUser(newUserData, this.props.history)
 	}
 

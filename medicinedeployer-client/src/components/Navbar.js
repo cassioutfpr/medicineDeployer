@@ -111,8 +111,15 @@ class Navbar extends Component {
                 {localStorage.credentials} 
               </Typography>
             </Grid>
-            <Grid className={classes.selectedList} item xs={3}/>
+            <Grid className={classes.selectedList} item xs={1}>
+              <Typography className={classes.doctorName} noWrap>
+                Hospital
+                <br/>
+                {localStorage.hospital} 
+              </Typography>
+            </Grid>
             
+            <Grid className={classes.selectedList} item xs={2}/>
             <Grid className={classes.selectedList} item xs={3}>
            		<img src={AppIcon} alt="visitorhealthicon" className={classes.image}/>
             </Grid>

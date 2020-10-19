@@ -2,13 +2,14 @@ const { db } = require('../util/admin')
 const { validateAddMedicationData } = require('../util/validators')
 
 exports.getDeliveredOrders = (request, response) => {
+	var hospital = request.params.hospital;
 	db.collection('orders').get()
 		.then(data => {
 			//data is a querySnapshot witch has docs in it
 			let orders = []; 
 			data.forEach(doc => {
 				//iterating through array of docs
-				if(doc.data().state === 'delivered')
+				if(doc.data().state === 'delivered' && doc.data().hospital === hospital)
 				{
 					orders.push({
 						orderId: doc.id, //reference that the doc has. It is not in doc.data()
@@ -16,12 +17,13 @@ exports.getDeliveredOrders = (request, response) => {
 						name: doc.data().name,
 						bed: doc.data().bed,
 						associated_doctor: doc.data().associated_doctor,
-						gender:doc.data().gender,
 						aisle: doc.data().aisle,
-						bed: doc.data().bed,
 						diagnosis: doc.data().diagnosis,
 						medication: doc.data().medication,
 						notifications: doc.data().notifications,
+						createdAt: doc.data().createdAt,
+						nurse: doc.data().nurse,
+						deliveredAt: doc.data().deliveredAt,
 					});
 				}
 			});
@@ -60,18 +62,22 @@ exports.addOneMedication = (request,response) => {
 }
 
 exports.getAllMedication = (request, response) => {
+	var hospital = request.params.hospital;
 	db.collection('medication').orderBy('name').get()
 		.then(data => {
 			//data is a querySnapshot witch has docs in it
 			var medication = []; 
 			data.forEach(doc => {
-				//iterating through array of docs
-				medication.push({
-					medicationId: doc.id,
-					name: doc.data().name,
-					quantity_left: doc.data().quantity_left,
-					quantity_used: doc.data().quantity_used,
-				});
+				if(doc.data().hospital === hospital)
+				{
+					//iterating through array of docs
+					medication.push({
+						medicationId: doc.id,
+						name: doc.data().name,
+						quantity_left: doc.data().quantity_left,
+						quantity_used: doc.data().quantity_used,
+					});
+				}
 			});
 			return response.json(medication);
 		})

@@ -29,7 +29,6 @@ class AddPatient extends React.Component{
       city: "",
       state: 'AC',
       aisle: "",
-      bed: "",
       gender: "Masculino",
       completed:33,
       page: 1,
@@ -43,7 +42,7 @@ class AddPatient extends React.Component{
       selectedEndDate: new Date(),
       periodicity: "01:00",
       quantity: "",
-      unity: ""
+      unity: "COMP"
     }
 
     this.handleClickOpen = this.handleClickOpen.bind(this);
@@ -84,7 +83,7 @@ class AddPatient extends React.Component{
         route = '/getDiagnosisSearch';
         break;
       case 3:
-        route = '/getMedicationSearch';
+        route = `/getMedicationSearch/${localStorage.hospital}`;
         break;
       default:
         route = '/'
@@ -166,7 +165,6 @@ class AddPatient extends React.Component{
       city: "",
       state: 'AC',
       aisle: "",
-      bed: "",
       gender: "Masculino",
       errors: {},
       searchInput:"",
@@ -178,7 +176,7 @@ class AddPatient extends React.Component{
       selectedEndDate: new Date(),
       periodicity: "01:00",
       quantity: "",
-      unity: ""
+      unity: "COMP"
     })
   };
 
@@ -203,11 +201,13 @@ class AddPatient extends React.Component{
       city            : this.state.city,
       state           : this.state.state,
       aisle           : this.state.aisle,
-      bed             : this.state.bed,
       gender          : this.state.gender,
       associated_admin: 'admin',
       score           : 100,
+      hospital        : localStorage.hospital
     };
+
+    console.log(patientData)
 
     axios.post('/patients', patientData, {headers: {Authorization: localStorage.FBIdToken}})
       .then(res => {
@@ -268,6 +268,8 @@ class AddPatient extends React.Component{
 
     console.log(medicationObj)
 
+    console.log(this.state.patientUrl)
+
     axios.post(`/patients/addMedication/${this.state.patientUrl}`, medicationObj, {headers: {Authorization: localStorage.FBIdToken}})
       .then(res => {
         this.setState({
@@ -279,7 +281,7 @@ class AddPatient extends React.Component{
           selectedEndDate: new Date(),
           periodicity: "01:00",
           quantity: "",
-          unity: "",
+          unity: "COMP",
           loading: false
         })
         this.props.getPatients()

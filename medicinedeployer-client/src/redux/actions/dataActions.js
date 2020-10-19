@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export const getPatients = () => (dispatch) => {
 	dispatch({ type: LOADING_UI });
-	axios.get('/patients', {headers: {Authorization: localStorage.FBIdToken}})
+	axios.get(`/patients/${localStorage.hospital}`, {headers: {Authorization: localStorage.FBIdToken}})
   		.then(response => {
   			console.log(response.data)
 			dispatch({
@@ -22,7 +22,7 @@ export const getPatients = () => (dispatch) => {
 
 export const getOrders = () => (dispatch) => {
 	dispatch({ type: LOADING_UI });
-	axios.get('/getOrders', {headers: {Authorization: localStorage.FBIdToken}})
+	axios.get(`/getOrders/${localStorage.hospital}`, {headers: {Authorization: localStorage.FBIdToken}})
   		.then(response => {
   			console.log(response.data)
 			dispatch({
@@ -41,7 +41,7 @@ export const getOrders = () => (dispatch) => {
 
 export const getDeliveredOrders = () => (dispatch) => {
 	dispatch({ type: LOADING_UI });
-	axios.get('/admin/getDeliveredOrders', {headers: {Authorization: localStorage.FBIdToken}})
+	axios.get(`/admin/getDeliveredOrders/${localStorage.hospital}`, {headers: {Authorization: localStorage.FBIdToken}})
   		.then(response => {
   			console.log(response.data)
 			dispatch({
@@ -60,7 +60,7 @@ export const getDeliveredOrders = () => (dispatch) => {
 
 export const getMedication = () => (dispatch) => {
 	dispatch({ type: LOADING_UI });
-	axios.get('/admin/getMedication', {headers: {Authorization: localStorage.FBIdToken}})
+	axios.get(`/admin/getMedication/${localStorage.hospital}`, {headers: {Authorization: localStorage.FBIdToken}})
   		.then(response => {
   			console.log(response.data)
 			dispatch({
@@ -74,5 +74,15 @@ export const getMedication = () => (dispatch) => {
         		type: SET_ERRORS,
         		payload: err.response.data
       		});
+    	});
+}
+
+export const updateOrders = () => (dispatch) => {
+	axios.get(`/updateOrders`, {headers: {Authorization: localStorage.FBIdToken}})
+  		.then(response => {
+  			console.log(response.data)
+		})
+		.catch((err) => {
+			console.log(err)	
     	});
 }

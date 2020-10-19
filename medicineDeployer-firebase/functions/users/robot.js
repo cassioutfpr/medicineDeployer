@@ -64,6 +64,8 @@ exports.orderDelivered = (request, response) => {
 			}
 			orderData = doc.data();
 			orderData.state = 'delivered'
+			orderData.nurse = request.body.nurse
+			orderData.deliveredAt = request.body.deliveredAt
 			db.collection('/orders').doc(orderId).update(orderData)
 				.then(data => {
 					return response.json({message: 'Pedido atualizado com sucesso'});

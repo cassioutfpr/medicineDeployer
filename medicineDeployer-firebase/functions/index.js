@@ -19,19 +19,19 @@ const { getDeliveredOrders, addOneMedication, getAllMedication, updateMedication
 const FBAuth = require('./util/fbAuth');
 
 //getting colletion documents from http get  ===> https://firebase.google.com/docs/firestore/query-data/get-data
-app.get('/patients', getAllPatients);
+app.get('/patients/:hospital', getAllPatients);
 app.get('/patients/:patientId', getPatient);
 app.get('/allDiagnosis', getAllDiagnosis);
 app.post('/getDiagnosisSearch', getDiagnosisSearch);
-app.post('/getMedicationSearch', getMedicationSearch);
+app.post('/getMedicationSearch/:hospital', getMedicationSearch);
 
 //adding colletion documents from http post
 //To use express post() method with 3 arguments => the second one can prevent from being executed (middleware)
 //https://expressjs.com/en/guide/using-middleware.html
-app.post('/patients', FBAuth,addOnePatient);
+app.post('/patients', FBAuth, addOnePatient);
 app.delete('/patients/:patientId', FBAuth, deletePatient);
 app.post('/patients/addDiagnosis/:patientId', FBAuth, addDiagnosisToPatient);
-app.post('/patients/addMedication/:patientId', FBAuth, addMedicationToPatient);
+app.post('/patients/addMedication/:patientId', addMedicationToPatient);
 app.post('/patients/sendNotification', FBAuth,sendNotification);
 
 //Doctor credentials 
@@ -45,7 +45,7 @@ app.post('/loginDoctor', loginDoctor);
 
 //UpdateOrders
 app.get('/updateOrders', updateOrders);
-app.get('/getOrders', getAllOrders);
+app.get('/getOrders/:hospital', getAllOrders);
 app.post('/doctors/orderSentFromPharmaceutical/:id', orderSentFromPharmaceutical)
 
 //getOrdersFromPharmaceutical
@@ -54,9 +54,9 @@ app.post('/robot/deliveringOrder/:id', deliveringOrder)
 app.post('/robot/orderDelivered/:id', orderDelivered)
 
 app.post('/addOneMedication', addOneMedication)
-app.get('/admin/getMedication', getAllMedication);
+app.get('/admin/getMedication/:hospital', getAllMedication);
 app.post('/admin/updateMedicationQuantity/:id', updateMedicationQuantity)
-app.get('/admin/getDeliveredOrders', getDeliveredOrders)
+app.get('/admin/getDeliveredOrders/:hospital', getDeliveredOrders)
 
 app.use(cors);
 

@@ -127,10 +127,6 @@ export default function AddPatientBody(props) {
             className={classes.textField} onChange={props.handleChange} 
             helperText = {props.errors.aisle} error = {props.errors.aisle ? true : false} variant="outlined"/>
 
-            <TextField id="bed" name="bed" type="text" label="Cama" 
-            className={classes.textField} onChange={props.handleChange} 
-            helperText = {props.errors.bed} error = {props.errors.bed ? true : false} variant="outlined"/>
-
             <FormControl component="fieldset" className={classes.genderForm} onChange={props.handleChange} >
               <FormLabel component="legend">Gênero</FormLabel>
               <RadioGroup row aria-label="gender" name="gender" defaultValue="male">

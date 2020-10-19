@@ -105,10 +105,6 @@ export default function AddStaffBody(props) {
             className={classes.textField} value={props.crm} onChange={props.handleChange} 
             helperText = {props.errors.crm} error = {props.errors.crm ? true : false} variant="outlined"/>}
 
-            <TextField id="hospital" name="hospital" type="text" label="Hospital" 
-            className={classes.textField}  onChange={props.handleChange} 
-            helperText = {props.errors.hospital} error = {props.errors.hospital ? true : false} variant="outlined"/>
-
         </DialogContent>    
         
         <DialogActions>

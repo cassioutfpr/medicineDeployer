@@ -33,7 +33,7 @@ exports.signupDoctor = (request, response) => {
 	db.doc(`/doctors/${newUser.email}`).get()
 		.then(doc => { //from get()
 			if(doc.exists){
-				return response.status(400).json({crm: 'Este email já foi utilizado'});
+				return response.status(400).json({response: 'Este email já foi utilizado'});
 			}else{
 				return firebase.auth().createUserWithEmailAndPassword(newUser.email, newUser.password);
 			}
@@ -130,7 +130,7 @@ exports.updateOrders = (request, response) => {
 	return response.json({ message: 'Updated'});
 }
 
-exports.calculateNewOrders = () => {
+function calculateNewOrders(){
 	let ordersPerPatient = [];
 
 	db.collection('patients').orderBy('name').get()
@@ -147,7 +147,8 @@ exports.calculateNewOrders = () => {
 					var patientId = patient.id;
 
 					if(!(patientId in ordersPerPatient)) {
-						ordersPerPatient[patientId] = order.initializeNewOrder(patientId, patient.data().aisle);
+						ordersPerPatient[patientId] = order.initializeNewOrder(patient.data().name, patient.data().aisle, patient.data().hospital, 
+							patient.data().notifications, patient.data().diagnosis, patient.data().associated_doctor);
 					}
 
 					ordersPerPatient[patientId].addMedication(medication);
@@ -199,13 +200,14 @@ function updatePatientData(patient, patientMedications) {
 }
 
 exports.getAllOrders = (request, response) => {
+	var hospital = request.params.hospital;
 	db.collection('orders').get()
 		.then(data => {
 			//data is a querySnapshot witch has docs in it
 			let orders = []; 
 			data.forEach(doc => {
 				//iterating through array of docs
-				if(doc.data().state === 'created')
+				if(doc.data().state === 'created' && doc.data().hospital === hospital)
 				{
 					orders.push({
 						orderId: doc.id, //reference that the doc has. It is not in doc.data()
@@ -213,12 +215,10 @@ exports.getAllOrders = (request, response) => {
 						name: doc.data().name,
 						bed: doc.data().bed,
 						associated_doctor: doc.data().associated_doctor,
-						gender:doc.data().gender,
 						aisle: doc.data().aisle,
-						bed: doc.data().bed,
-						diagnosis: doc.data().diagnosis,
 						medication: doc.data().medication,
 						notifications: doc.data().notifications,
+						diagnosis: doc.data().diagnosis,
 					});
 				}
 			});
